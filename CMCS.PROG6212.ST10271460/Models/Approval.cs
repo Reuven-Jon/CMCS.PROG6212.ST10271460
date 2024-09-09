@@ -11,3 +11,4 @@
         public ClaimStatus ManagerApprovalStatus { get; set; }
         public DateTime FinalApprovalDate { get; set; } // Set when all approvals are done
     }
+}
