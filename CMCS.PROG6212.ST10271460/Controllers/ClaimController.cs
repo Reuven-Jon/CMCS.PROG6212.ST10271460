@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using CMCS.PROG6212.ST10271460.Models.CMCS.PROG6212.ST10271460.Models;
 
+//Reuven-Jon Kadalie ST10271460
+
 namespace CMCS.PROG6212.ST10271460.Controllers
 {
     public class ClaimController : Controller
