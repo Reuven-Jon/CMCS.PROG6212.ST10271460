@@ -1,5 +1,5 @@
-﻿
-@model IEnumerable<ContractMonthlyClaimSystem.Models.Claim>
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,45 +11,54 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         .container {
             width: 80%;
             margin: 0 auto;
             padding-top: 50px;
         }
+
         .login-section {
             text-align: center;
             margin-bottom: 30px;
         }
-        .login-section button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+
+            .login-section button {
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 15px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .button-group {
             text-align: right;
             margin-top: 20px;
         }
-        .button-group button {
-            padding: 10px 15px;
-            font-size: 16px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
+
+            .button-group button {
+                padding: 10px 15px;
+                font-size: 16px;
+                margin-left: 10px;
+                cursor: pointer;
+            }
     </style>
 </head>
 <body>
@@ -58,7 +67,8 @@
         <div class="login-section">
             <h2>Welcome to the Contract Monthly Claim System</h2>
             <p>Please log in to view and manage your claims.</p>
-            <button onclick="location.href='@Url.Action("MonthlyClaims", "Claim")'">Login</button>
+            <button onclick="location.href='@Url.Action("MonthlyClaims", "Claim")'">Login to View Claims</button>
+
         </div>
 
         <!-- Monthly Claims Table -->
@@ -73,24 +83,26 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Loop through each claim in the model and display it -->
-                @foreach (var claim in Model)
+                @if (Model != null)
                 {
-                    <tr>
-                        <td>@claim.ContractorName</td>
-                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                        <td>@claim.Amount.ToString("C")</td>
-                        <td>@claim.Status</td>
-                    </tr>
+                    foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.ContractorName</td>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                            <td>@claim.Status</td>
+                        </tr>
+                    }
                 }
-                <!-- If no claims are available, display a message -->
-                @if (!Model.Any())
+                else
                 {
                     <tr>
                         <td colspan="4" style="text-align: center;">No claims available.</td>
                     </tr>
                 }
             </tbody>
+
         </table>
 
         <!-- Button Group (Submit Claim and Manage Claims) -->
