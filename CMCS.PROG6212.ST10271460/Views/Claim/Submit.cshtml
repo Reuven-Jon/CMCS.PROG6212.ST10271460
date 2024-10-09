@@ -1,23 +1,43 @@
-﻿
+﻿@model CMCS.PROG6212.ST10271460.Models.Claim
 
-<h1>Submit Claim</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Claim</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Submit a New Claim</h2>
 
-<form>
-    <label>Hours Worked:</label>
-    <input type="number" disabled />
+        <form method="post" enctype="multipart/form-data">
+            <div>
+                <label>Hours Worked</label>
+                <input type="number" name="HoursWorked" step="0.01" required />
+            </div>
 
-    <label>Expenses:</label>
-    <input type="number" disabled />
+            <div>
+                <label>Hourly Rate</label>
+                <input type="number" name="HourlyRate" step="0.01" required />
+            </div>
 
-    <label>Description of Work:</label>
-    <textarea disabled></textarea>
+            <div>
+                <label>Additional Notes</label>
+                <textarea name="Notes"></textarea>
+            </div>
 
-    <label>Claim Period:</label>
-    <input type="date" disabled />
+            <div>
+                <label>Upload Supporting Document</label>
+                <input type="file" name="supportingDocument" />
+            </div>
 
-    <button type="submit" disabled>Submit Claim</button>
-</form>
+            <div>
+                <button type="submit">Submit Claim</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
 
-<button disabled>View Claim History</button>
-<button disabled>Check Approval Status</button>
 
