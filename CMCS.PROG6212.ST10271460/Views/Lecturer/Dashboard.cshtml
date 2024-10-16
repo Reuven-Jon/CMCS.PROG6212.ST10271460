@@ -1,0 +1,30 @@
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Lecturer Dashboard</h2>
+
+        <h4>Your Claim</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Claim Period</th>
+                    <th>Hours Worked</th>
+                    <th>Submitted Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
+                    <tr>
+                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                        <td>@claim.HoursWorked</td>
+                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                        <td>@claim.Amount.ToString("C")</td>
+                        <td>@claim.Status</td>
+                    </tr>
+                }
+            </tbody>
+            </table>
+    </div>

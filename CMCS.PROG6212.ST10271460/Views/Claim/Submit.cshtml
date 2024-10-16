@@ -1,23 +1,39 @@
-﻿
+﻿@model CMCS.PROG6212.ST10271460.Models.Claim
 
-<h1>Submit Claim</h1>
+<h2>Submit a New Claim</h2>
 
-<form>
-    <label>Hours Worked:</label>
-    <input type="number" disabled />
+<form asp-action="SubmitClaim" method="post">
+    <div class="form-group">
+        <label for="ClaimPeriod">Claim Period</label>
+        <input asp-for="ClaimPeriod" class="form-control" type="date" required />
+    </div>
 
-    <label>Expenses:</label>
-    <input type="number" disabled />
+    <div class="form-group">
+        <label for="HoursWorked">Hours Worked</label>
+        <input asp-for="HoursWorked" class="form-control" type="number" required />
+    </div>
 
-    <label>Description of Work:</label>
-    <textarea disabled></textarea>
+    <div class="form-group">
+        <label for="HourlyRate">Hourly Rate</label>
+        <input asp-for="HourlyRate" class="form-control" type="number" required />
+    </div>
 
-    <label>Claim Period:</label>
-    <input type="date" disabled />
+    <div class="form-group">
+        <label for="Bonuses">Bonuses</label>
+        <input asp-for="Bonuses" class="form-control" type="number" />
+    </div>
 
-    <button type="submit" disabled>Submit Claim</button>
+    <div class="form-group">
+        <label for="Expenses">Expenses</label>
+        <input asp-for="Expenses" class="form-control" type="number" />
+    </div>
+
+    <div class="form-group">
+        <label for="Deductions">Deductions</label>
+        <input asp-for="Deductions" class="form-control" type="number" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Claim</button>
 </form>
 
-<button disabled>View Claim History</button>
-<button disabled>Check Approval Status</button>
 

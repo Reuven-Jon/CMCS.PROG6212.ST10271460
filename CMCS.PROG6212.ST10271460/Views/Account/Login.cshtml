@@ -1,0 +1,26 @@
+﻿@model CMCS.PROG6212.ST10271460.Models.LoginViewModel
+
+<h2>Login as @ViewBag.Role</h2>
+
+<form method="post" asp-action="Login">
+    <input type="hidden" asp-for="Role" value="@ViewBag.Role" />
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input asp-for="Username" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input asp-for="Password" class="form-control" type="password" required />
+    </div>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+

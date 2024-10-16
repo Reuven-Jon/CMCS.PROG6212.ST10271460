@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to CMCS</title>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .welcome-container {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .welcome-header {
+            color: #343a40;
+        }
+
+        .welcome-btn {
+            padding: 15px 25px;
+            font-size: 18px;
+            margin: 20px;
+        }
+
+        .btn-lecturer {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-coordinator {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container welcome-container">
+        <h1 class="welcome-header">Welcome to the Contract Monthly Claim System (CMCS)</h1>
+        <p class="lead">Please select your role to continue:</p>
+
+        <!-- Role Selection Buttons -->
+        <div>
+            <button class="btn welcome-btn btn-lecturer" onclick="location.href='@Url.Action("Login", "Account", new { role = "Lecturer" })'">Lecturer</button>
+            <button class="btn welcome-btn btn-coordinator" onclick="location.href='@Url.Action("Login", "Account", new { role = "Coordinator" })'">Coordinator / Manager</button>
+        </div>
+    </div>
+</body>
+</html>

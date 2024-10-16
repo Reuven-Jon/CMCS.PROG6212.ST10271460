@@ -6,10 +6,11 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Welcome()
         {
             return View();
         }
     }
+
 }
 

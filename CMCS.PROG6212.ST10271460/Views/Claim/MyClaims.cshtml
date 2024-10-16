@@ -1,0 +1,123 @@
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims</title>
+    <style>
+        .claim-category {
+            margin-top: 20px;
+        }
+
+            .claim-category h3 {
+                background-color: #f2f2f2;
+                padding: 10px;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Claims</h2>
+
+        <!-- Pending Claims Section -->
+        <div class="claim-category">
+            <h3>Pending Claims</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Claim Period</th>
+                        <th>Hours Worked</th>
+                        <th>Hourly Rate</th>
+                        <th>Submitted Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model.Where(c => c.Status == ClaimStatus.Pending))
+                    {
+                        <tr>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.HoursWorked</td>
+                            <td>@claim.HourlyRate.ToString("C")</td>
+                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Approved Claims Section -->
+        <div class="claim-category">
+            <h3>Approved Claims</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Claim Period</th>
+                        <th>Hours Worked</th>
+                        <th>Hourly Rate</th>
+                        <th>Submitted Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model.Where(c => c.Status == ClaimStatus.Approved))
+                    {
+                        <tr>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.HoursWorked</td>
+                            <td>@claim.HourlyRate.ToString("C")</td>
+                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Rejected Claims Section -->
+        <div class="claim-category">
+            <h3>Rejected Claims</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Claim Period</th>
+                        <th>Hours Worked</th>
+                        <th>Hourly Rate</th>
+                        <th>Submitted Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model.Where(c => c.Status == ClaimStatus.Rejected))
+                    {
+                        <tr>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.HoursWorked</td>
+                            <td>@claim.HourlyRate.ToString("C")</td>
+                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
