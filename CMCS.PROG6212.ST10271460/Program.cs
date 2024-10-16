@@ -3,12 +3,24 @@ using CMCS.PROG6212.ST10271460.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddControllersWithViews();
+// Add services to the container.
 
-// Use an In-Memory database for development instead of SQL Server
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("CMCSDatabase"));  // Using In-Memory database
+// If you're in development and want to use the in-memory database:
+if (builder.Environment.IsDevelopment())
+{
+    // Use an In-Memory database for development instead of SQL Server
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("CMCSDatabase"));  // Using In-Memory database
+}
+else
+{
+    // Use SQL Server when not in development
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
+
+// Add controllers with views
+builder.Services.AddControllersWithViews();
 
 // Enable session management
 builder.Services.AddSession(options =>
@@ -27,8 +39,12 @@ builder.Services.AddAuthentication("CookieAuth").AddCookie("CookieAuth", config 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-if (!app.Environment.IsDevelopment())
+// Configure middleware based on environment
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();  // Shows detailed exception page
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
@@ -38,16 +54,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseSession();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseSession();          // Enable session handling
+app.UseAuthentication();   // Enable authentication
+app.UseAuthorization();    // Enable authorization
 
 // Change default route to point to Welcome page
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Welcome}/{id?}");
 
-
 app.Run();
-
 
