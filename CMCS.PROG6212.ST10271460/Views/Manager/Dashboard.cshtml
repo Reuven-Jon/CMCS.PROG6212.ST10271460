@@ -1,191 +1,203 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
 
-<div class="container mt-5">
-    <h2 class="text-center" style="color: #ff6600;">Coordinator/Manager Dashboard</h2>
-
-    <!-- Welcome message pop-up -->
-    <div id="welcome-popup" style="background-color: #f4f7f6; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px;">
-        <h4>Welcome to the Coordinator/Manager Dashboard!</h4>
-        <p>Here you can manage and approve claims.</p>
-    </div>
-
-    <!-- Claims Table (similar to Lecturer's table layout) -->
-    <div class="card mt-4">
-        <h3>Manage Claims</h3>
-        <table class="table table-striped" border="1" cellpadding="10" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>Lecturer Name</th>
-                    <th>Claim Period</th>
-                    <th>Hours Worked</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                    <th>Document</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var claim in Model)
-                {
-                    <tr>
-                        <td>@claim.LecturerName</td>
-                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                        <td>@claim.HoursWorked</td>
-                        <td><span class="status @(claim.Status?.ToLower() ?? "unknown")">@claim.Status</span></td>
-                        <td>
-                            <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
-                            <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
-                        </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(claim.DocumentPath))
-                            {
-                                <a href="@claim.DocumentPath" target="_blank">View Document</a>
-                            }
-                            else
-                            {
-                                <span>No document</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    // Function to update the claim status with a manager note
-    function updateClaimStatus(claimId, status) {
-        const managerNote = prompt("Enter a note for this claim:");
-        if (managerNote) {
-            $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
-                alert(`Claim ${status}`);
-                location.reload(); // Reload the page after status update
-            });
-        }
-    }
-
-    // Hide the welcome popup after 5 seconds (as in the lecturer dashboard)
-    setTimeout(function () {
-        document.getElementById('welcome-popup').style.display = 'none';
-    }, 5000);
-</script>
-
-<style>
-    /* Styling to make it similar to Lecturer Dashboard */
-    body {
-        background-color: #f4f7f6;
-        font-family: Arial, sans-serif;
-    }
-
-    .container {
-        padding: 20px;
-        background-color: white;
-        margin-top: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-        color: #ff6600;
-        text-align: center;
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    .table, th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    th {
-        background-color: #f4f4f4;
-    }
-
-    .btn-info {
-        background-color: #17a2b8;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-
-        .btn-info:hover {
-            background-color: #138496;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator/Manager Dashboard</title>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
         }
 
-    .status {
-        font-weight: bold;
-    }
-
-        .status.pending {
-            color: orange;
+        .container {
+            padding: 20px;
+            background-color: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .status.approved {
-            color: green;
-        }
-
-        .status.rejected {
-            color: red;
-        }
-
-    /* Styling for the consistent hamburger menu */
-    .hamburger {
-        cursor: pointer;
-        display: inline-block;
-        margin-bottom: 15px;
-    }
-
-        .hamburger .bar {
-            width: 30px;
-            height: 3px;
-            background-color: #333;
-            margin: 6px auto;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.active .bar:nth-child(1) {
-            transform: rotate(-45deg) translate(-5px, 5px);
-        }
-
-        .hamburger.active .bar:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active .bar:nth-child(3) {
-            transform: rotate(45deg) translate(-5px, -5px);
-        }
-
-    .nav-menu {
-        display: none;
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-
-        .nav-menu.active {
-            display: block;
-        }
-
-        .nav-menu a {
-            display: block;
-            padding: 10px;
-            background-color: #ff6600;
-            color: white;
-            text-decoration: none;
-            margin-bottom: 5px;
+        h2 {
+            color: #ff6600;
             text-align: center;
         }
 
-            .nav-menu a:hover {
-                background-color: #e65c00;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+            .btn-info:hover {
+                background-color: #138496;
             }
-</style>
+
+        .hamburger {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+            .hamburger .bar {
+                width: 30px;
+                height: 3px;
+                background-color: #333;
+                margin: 6px auto;
+                transition: all 0.3s ease;
+            }
+
+            .hamburger.active .bar:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 5px);
+            }
+
+            .hamburger.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active .bar:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -5px);
+            }
+
+        .nav-menu {
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .nav-menu.active {
+                display: block;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 10px;
+                background-color: #ff6600;
+                color: white;
+                text-decoration: none;
+                margin-bottom: 5px;
+                text-align: center;
+            }
+
+                .nav-menu a:hover {
+                    background-color: #ff8c1a;
+                }
+    </style>
+</head>
+<body>
+    <div class="hamburger" id="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+
+    <div class="nav-menu" id="nav-menu">
+        <a href="/Manager/Dashboard">Manage Claims</a>
+        <a href="/Account/Logout">Logout</a>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Coordinator/Manager Dashboard</h2>
+
+        <!-- Welcome message pop-up -->
+        <div id="welcome-popup" style="background-color: #f4f7f6; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px;">
+            <h4>Welcome to the Coordinator/Manager Dashboard!</h4>
+            <p>Here you can manage and approve claims.</p>
+        </div>
+
+        <!-- Claims Table -->
+        <div class="card mt-4">
+            <h3>Manage Claims</h3>
+            <table border="1" cellpadding="10" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Lecturer Name</th>
+                        <th>Claim Period</th>
+                        <th>Hours Worked</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                        <th>Document</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.LecturerName</td>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.HoursWorked</td>
+                            <td><span class="status @(claim.Status?.ToLower() ?? "unknown")">@claim.Status</span></td>
+                            <td>
+                                <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
+                                <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                                {
+                                    <a href="@claim.DocumentPath" target="_blank">View Document</a>
+                                }
+                                else
+                                {
+                                    <span>No document</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Hide the welcome popup after 5 seconds
+        setTimeout(function () {
+            document.getElementById('welcome-popup').style.display = 'none';
+        }, 5000);
+
+        // Approve or Reject claim functionality
+        function updateClaimStatus(claimId, status) {
+            const managerNote = prompt("Enter a note for this claim:");
+            if (managerNote) {
+                $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
+                    alert(`Claim ${status}`);
+                    location.reload(); // Reload the page after status update
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+
 
 
 
