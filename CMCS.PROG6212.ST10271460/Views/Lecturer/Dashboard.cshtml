@@ -33,6 +33,7 @@
     </div>
 
     <!-- Display Existing Claims -->
+    <!-- Show Lecturer Claims -->
     <div class="card mt-4">
         <h3>Your Claims</h3>
         <table border="1" cellpadding="10" cellspacing="0" width="100%">
@@ -40,24 +41,40 @@
                 <tr>
                     <th>Claim Period</th>
                     <th>Hours Worked</th>
+                    <th>Hourly Rate</th>
+                    <th>Amount</th>
                     <th>Status</th>
-                    <th>Notes</th>
+                    <th>Submitted Date</th>
+                    <th>Document</th>
                 </tr>
             </thead>
-            <tbody id="claims-table-body">
+            <tbody>
                 @foreach (var claim in Model)
                 {
                     <tr>
                         <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                         <td>@claim.HoursWorked</td>
+                        <td>@claim.HourlyRate.ToString("C")</td>
+                        <td>@claim.Amount.ToString("C")</td>
                         <td>@claim.Status</td>
-                        <td>@claim.Notes</td>
+                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                            {
+                                <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
+                            }
+                            else
+                            {
+                                <span>No document</span>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-</div>
+
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>

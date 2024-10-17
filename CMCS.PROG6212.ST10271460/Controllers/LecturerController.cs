@@ -41,35 +41,40 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SubmitClaim(Claim claim, IFormFile Document)
+       
+        public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile Document)
         {
             if (ModelState.IsValid)
             {
+                var claim = new Claim
+                {
+                    LecturerId = User.Identity.Name,  // Assuming lecturer is logged in
+                    LecturerName = Context.Session.GetString("Username"),
+                    ClaimPeriod = model.ClaimPeriod,
+                    HoursWorked = model.HoursWorked,
+                    HourlyRate = model.HourlyRate,
+                    Amount = model.HoursWorked * model.HourlyRate,
+                    DateSubmitted = DateTime.Now,
+                    Status = "Pending"
+                };
+
                 if (Document != null && Document.Length > 0)
                 {
-                    // Save the PDF file to wwwroot/uploads/lecturer_docs
-                    var fileName = Path.GetFileName(Document.FileName);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/lecturer_docs", fileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    var documentPath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Document.FileName);
+                    using (var stream = new FileStream(documentPath, FileMode.Create))
                     {
-                        Document.CopyTo(stream);
+                        await Document.CopyToAsync(stream);
                     }
-
-                    // Set the document path to be saved in the database
-                    claim.DocumentPath = "/uploads/lecturer_docs/" + fileName;
+                    claim.DocumentPath = "/uploads/" + Document.FileName;
                 }
 
-                claim.ContractorName = HttpContext.Session.GetString("Username") ?? "Unknown";
-                claim.Status = ClaimStatus.Pending;
-                claim.DateSubmitted = DateTime.Now;
                 _context.Claims.Add(claim);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                return RedirectToAction("Dashboard");
+                return RedirectToAction("Index"); // Redirect to Lecturer Dashboard
             }
 
-            return View(claim);
+            return View(model);
         }
 
     }

@@ -53,6 +53,20 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             return RedirectToAction("Dashboard");
         }
 
+        [HttpPost]
+        public IActionResult UpdateClaimStatus(int claimId, string status, string managerNote)
+        {
+            var claim = _context.Claims.Find(claimId);
+            if (claim != null)
+            {
+                claim.Status = status;
+                claim.Notes = managerNote;
+                _context.SaveChanges();
+            }
+
+            return Ok();
+        }
+
 
     }
 }

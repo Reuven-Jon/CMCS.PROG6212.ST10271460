@@ -29,7 +29,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         {
             if (ModelState.IsValid)
             {
-                claim.Status = ClaimStatus.Pending; // Default status
+                ClaimStatus status = Enum.Parse<ClaimStatus>("Approved");
                 claim.DateSubmitted = DateTime.Now;
                 _context.Add(claim);
                 await _context.SaveChangesAsync();

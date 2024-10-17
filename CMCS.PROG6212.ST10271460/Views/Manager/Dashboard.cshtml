@@ -65,17 +65,19 @@
             <p>Here you can manage and approve claims.</p>
         </div>
 
-        <!-- Claims management section -->
-        <div class="card">
-            <h2>Manage Claims</h2>
+        <!-- Manage Claims -->
+        <!-- Manage Claims -->
+        <div class="card mt-4">
+            <h3>Manage Claims</h3>
             <table border="1" cellpadding="10" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Lecturer Name</th>
                         <th>Claim Period</th>
-                        <th>Amount</th>
+                        <th>Hours Worked</th>
                         <th>Status</th>
                         <th>Actions</th>
+                        <th>Notes</th>
                         <th>Document</th>
                     </tr>
                 </thead>
@@ -83,14 +85,15 @@
                     @foreach (var claim in Model)
                     {
                         <tr>
-                            <td>@claim.ContractorName</td>
+                            <td>@claim.LecturerName</td>
                             <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.Amount.ToString("C")</td>
+                            <td>@claim.HoursWorked</td>
                             <td>@claim.Status</td>
                             <td>
-                                <a href="@Url.Action("ApproveClaim", "Manager", new { id = claim.Id })" class="btn btn-success">Approve</a>
-                                <a href="@Url.Action("RejectClaim", "Manager", new { id = claim.Id })" class="btn btn-danger">Reject</a>
+                                <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
+                                <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
                             </td>
+                            <td>@claim.Notes</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(claim.DocumentPath))
                                 {
@@ -105,15 +108,49 @@
                     }
                 </tbody>
             </table>
+        </div>
 
-        </div>
-        </div>
+        <script>
+            function updateClaimStatus(claimId, status) {
+                const managerNote = prompt("Enter a note for this claim:");
+                if (managerNote) {
+                    $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
+                        alert(`Claim ${status}`);
+                        location.reload(); // Refresh the page after status update
+                    });
+                }
+            }
+        </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
 
     <script>
-        // Show welcome popup and fade out after 3 seconds
+        // Establish SignalR connection
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/claimHub")
+            .build();
+
+        connection.start().catch(err => console.error(err.toString()));
+
+        // Function to handle updating claim status with notes
+        function updateClaimStatus(claimId, status) {
+            const managerNote = prompt("Enter a note for this claim:");
+            if (managerNote) {
+                $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
+                    connection.invoke('UpdateClaimStatus', claimId, status, managerNote)
+                        .catch(err => console.error(err.toString()));
+
+                    alert(`Claim ${status}`);
+                    location.reload(); // Refresh the page after status update
+                });
+            }
+        }
+
+        // Hide the welcome popup after 8 seconds
         setTimeout(function () {
             document.getElementById('welcome-popup').style.display = 'none';
-        }, 3000);
+        }, 8000);
     </script>
 </body>
 </html>
