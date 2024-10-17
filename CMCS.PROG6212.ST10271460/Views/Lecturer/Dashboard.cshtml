@@ -1,4 +1,9 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+<<<<<<< HEAD
+=======
+
+<link rel="stylesheet" href="~/css/styles.css">
+>>>>>>> e67e039fed6ea280849229b3d400860b8a52c9b7
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +17,7 @@
             font-family: Arial, sans-serif;
         }
 
+<<<<<<< HEAD
         .container {
             padding: 20px;
             background-color: white;
@@ -196,5 +202,192 @@
     </script>
 </body>
 </html>
+=======
+    <!-- Welcome message pop-up for Lecturer -->
+    <div id="welcome-popup" class="card welcome-card">
+        <h3>Welcome to the Lecturer Dashboard!</h3>
+        <p>Hello, @Context.Session.GetString("Username")! Manage your claims here.</p>
+    </div>
+
+    <!-- Submit Claim Form -->
+    <div class="card mt-4">
+        <h3>Submit a New Claim</h3>
+        <form asp-action="SubmitClaim" enctype="multipart/form-data" method="post">
+            <div class="form-group">
+                <label for="ClaimPeriod">Claim Period</label>
+                <input type="month" id="ClaimPeriod" name="ClaimPeriod" required class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="HoursWorked">Hours Worked</label>
+                <input type="number" id="HoursWorked" name="HoursWorked" required class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="HourlyRate">Hourly Rate</label>
+                <input type="number" step="0.01" id="HourlyRate" name="HourlyRate" required class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="Document">Upload Supporting Document (PDF)</label>
+                <input type="file" id="Document" name="Document" accept=".pdf" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">Submit Claim</button>
+        </form>
+    </div>
+
+    <!-- Display Claims -->
+    <div class="card mt-4">
+        <h3>Your Claims</h3>
+        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Claim Period</th>
+                    <th>Hours Worked</th>
+                    <th>Hourly Rate</th>
+                    <th>Submitted Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
+                    <tr>
+                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                        <td>@claim.HoursWorked</td>
+                        <td>@claim.HourlyRate.ToString("C")</td>
+                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                        <td>@claim.Amount.ToString("C")</td>
+                        <td>
+                            @if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString())
+                            {
+                                <span class="status approved" style="color: green;">Accepted</span>
+                            }
+                            else if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString())
+                            {
+                                <span class="status rejected" style="color: red;">Rejected</span>
+                            }
+                            else
+                            {
+                                <span style="color: orange;">Pending</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Popup Container for Accepted/Rejected -->
+    <div id="popup-container" class="popup-container">
+        <div id="popup-message" class="popup-message"></div>
+    </div>
+</div>
+
+<script>
+    // Function to show a pop-up when a claim is accepted or rejected
+    function showPopup(status) {
+        var popupContainer = document.getElementById('popup-container');
+        var popupMessage = document.getElementById('popup-message');
+
+        if (status === 'accepted') {
+            popupMessage.classList.add('approved');
+            popupMessage.innerHTML = 'Accepted!';
+        } else if (status === 'rejected') {
+            popupMessage.classList.add('rejected');
+            popupMessage.innerHTML = 'Rejected!';
+        }
+
+        popupContainer.style.display = 'block';
+
+        // Hide popup after 8 seconds
+        setTimeout(function () {
+            popupContainer.style.display = 'none';
+            popupMessage.classList.remove('approved', 'rejected');
+        }, 8000);
+    }
+
+    // Show welcome popup and hide it after 8 seconds
+    window.onload = function () {
+        document.getElementById('welcome-popup').style.display = 'block';
+        setTimeout(function () {
+            document.getElementById('welcome-popup').style.display = 'none';
+        }, 8000);
+
+        // Trigger popup based on claim statuses
+        var claimStatuses = [];
+
+    @foreach (var claim in Model)
+    {
+        <text>
+                    if ('@claim.Status' === '@CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()') {
+                        claimStatuses.push('accepted')
+                        } else if ('@claim.Status' === '@CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()') {
+                        claimStatuses.push('rejected')
+                        }
+        </text>
+    }
+
+            if (claimStatuses.includes("accepted")) {
+            showPopup("accepted");
+        } else if (claimStatuses.includes("rejected")) {
+            showPopup("rejected");
+        }
+    };
+</script>
+
+<style>
+    .popup-container {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+
+    .popup-message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        font-size: 24px;
+        color: white;
+        text-align: center;
+    }
+
+        .popup-message.approved {
+            background-color: green;
+            animation: bounce 2s infinite;
+        }
+
+        .popup-message.rejected {
+            background-color: red;
+            animation: bounce 2s infinite;
+        }
+
+    .card {
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-card {
+        border: 2px solid green; /* Green border for lecturer welcome */
+        text-align: center;
+    }
+</style>
+
+
+
+>>>>>>> e67e039fed6ea280849229b3d400860b8a52c9b7
+
+
 
 
