@@ -10,57 +10,50 @@ namespace CMCS.PROG6212.ST10271460.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        // Constructor to inject ApplicationDbContext (database context)
         public ClaimController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Claim/Submit
         public IActionResult Submit()
         {
             return View(); // Render the Submit Claim page
         }
 
-        // POST: Submit a new claim
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(Claim claim)
         {
             if (ModelState.IsValid)
             {
-                ClaimStatus status = Enum.Parse<ClaimStatus>("Approved");
                 claim.DateSubmitted = DateTime.Now;
+                claim.Status = ClaimStatus.Pending.ToString();  // Correct status assignment
                 _context.Add(claim);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Dashboard", "Lecturer"); // Redirect to Lecturer's Dashboard after submission
+                return RedirectToAction("Dashboard", "Lecturer");
             }
             return View(claim);
         }
 
-        // GET: Claim/Manage (for managers to approve/reject)
+
         public async Task<IActionResult> Manage()
         {
-            var claims = await _context.Claims
-                .Include(c => c.ContractorName)
-                .ToListAsync();
+            var claims = await _context.Claims.ToListAsync();
             return View(claims);
         }
 
-        // GET: Claim/Analytics (for managers to view analytics)
         public async Task<IActionResult> Analytics()
         {
-            var totalClaims = await _context.Claims.CountAsync();
-            var pendingClaims = await _context.Claims.Where(c => c.Status == ClaimStatus.Pending).CountAsync();
-            var approvedClaims = await _context.Claims.Where(c => c.Status == ClaimStatus.Approved).CountAsync();
-            var rejectedClaims = await _context.Claims.Where(c => c.Status == ClaimStatus.Rejected).CountAsync();
+            var pendingClaims = await _context.Claims.Where(c => c.Status == ClaimStatus.Pending.ToString()).CountAsync();
+            var approvedClaims = await _context.Claims.Where(c => c.Status == ClaimStatus.Approved.ToString()).CountAsync();
+            var rejectedClaims = await _context.Claims.Where(c => c.Status == ClaimStatus.Rejected.ToString()).CountAsync();
 
-            ViewBag.TotalClaims = totalClaims;
             ViewBag.PendingClaims = pendingClaims;
             ViewBag.ApprovedClaims = approvedClaims;
             ViewBag.RejectedClaims = rejectedClaims;
 
             return View();
         }
+
     }
 }

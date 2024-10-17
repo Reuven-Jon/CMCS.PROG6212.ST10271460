@@ -3,53 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using CMCS.PROG6212.ST10271460.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace CMCS.PROG6212.ST10271460.Controllers
 {
     public class LecturerController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _hostingEnvironment;  // Add this for file upload
 
-        public LecturerController(ApplicationDbContext context)
+        public LecturerController(ApplicationDbContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;  // Initialize hosting environment
         }
 
         public IActionResult Dashboard()
         {
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Lecturer")
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var username = HttpContext.Session.GetString("Username");
             if (string.IsNullOrEmpty(username))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Get the lecturer's claims
             var claims = GetClaimsForLecturer(username);
 
-            ViewBag.Username = username;  // Pass username to the view
-            return View(claims);  // Return the list of claims
+            return View(claims);
         }
 
 
-        // Fetch claims for the logged-in lecturer
         private List<Claim> GetClaimsForLecturer(string username)
         {
-            return _context.Claims
-                .Where(c => c.ContractorName == username)
-                .ToList();
+            return _context.Claims.Where(c => c.ContractorName == username).ToList();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-       
         public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile Document)
         {
             if (ModelState.IsValid)
             {
+                var lecturerId = User.Identity?.Name;
+                if (lecturerId == null)
+                {
+                    ModelState.AddModelError(string.Empty, "User identity is not available.");
+                    return View(model);
+                }
+
                 var claim = new Claim
                 {
-                    LecturerId = User.Identity.Name,  // Assuming lecturer is logged in
-                    LecturerName = Context.Session.GetString("Username"),
+                    LecturerId = lecturerId,
+                    LecturerName = HttpContext.Session.GetString("Username") ?? string.Empty,  // Use HttpContext.Session to get the Username                                                                                               // Use HttpContext.Session to get the Username
                     ClaimPeriod = model.ClaimPeriod,
                     HoursWorked = model.HoursWorked,
                     HourlyRate = model.HourlyRate,
@@ -74,8 +86,18 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                 return RedirectToAction("Index"); // Redirect to Lecturer Dashboard
             }
 
-            return View(model);
+            return View(model);  // Return the view with the model for error display
         }
+
+
+
+        public IActionResult SubmitClaim()
+        {
+            var model = new ClaimViewModel(); // Initialize a ClaimViewModel instance
+            return View(model);  // Return the view with the ViewModel
+        }
+
+
 
     }
 }

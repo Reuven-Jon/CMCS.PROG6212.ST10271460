@@ -1,0 +1,29 @@
+﻿@model CMCS.PROG6212.ST10271460.Models.ClaimViewModel
+
+<h2>Submit a New Claim</h2>
+
+<form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="ClaimPeriod">Claim Period</label>
+        <input type="month" id="ClaimPeriod" name="ClaimPeriod" required class="form-control" value="@Model.ClaimPeriod" />
+    </div>
+
+    <div class="form-group">
+        <label for="HoursWorked">Hours Worked</label>
+        <input type="number" id="HoursWorked" name="HoursWorked" required class="form-control" value="@Model.HoursWorked" />
+    </div>
+
+    <div class="form-group">
+        <label for="HourlyRate">Hourly Rate</label>
+        <input type="number" step="0.01" id="HourlyRate" name="HourlyRate" required class="form-control" value="@Model.HourlyRate" />
+    </div>
+
+    <div class="form-group">
+        <label for="Document">Upload Supporting Document (PDF)</label>
+        <input type="file" id="Document" name="Document" accept=".pdf" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit Claim</button>
+</form>
+
+

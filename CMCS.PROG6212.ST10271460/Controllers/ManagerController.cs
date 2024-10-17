@@ -16,16 +16,13 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
         public IActionResult Dashboard()
         {
-            var username = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(username))
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Coordinator")
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            // Fetch all claims to display in the manager dashboard
             var claims = _context.Claims.ToList();
-
-            ViewBag.Username = username;  // Pass username to the view
             return View(claims);
         }
 
@@ -36,7 +33,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
             if (claim != null)
             {
-                claim.Status = ClaimStatus.Approved;
+                claim.Status = ClaimStatus.Approved.ToString(); // Convert enum to string
                 _context.SaveChanges();
             }
             return RedirectToAction("Dashboard");
@@ -47,11 +44,12 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
             if (claim != null)
             {
-                claim.Status = ClaimStatus.Rejected;
+                claim.Status = ClaimStatus.Rejected.ToString(); // Convert enum to string
                 _context.SaveChanges();
             }
             return RedirectToAction("Dashboard");
         }
+
 
         [HttpPost]
         public IActionResult UpdateClaimStatus(int claimId, string status, string managerNote)

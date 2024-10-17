@@ -67,34 +67,26 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">CMCS</a>
-            <div class="menu-btn" onclick="toggleMenu()">
-                <div class="hamburger"></div>
-                <div class="hamburger"></div>
-                <div class="hamburger"></div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">My Dashboard</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <span>Hello, @Context.Session.GetString("Username")!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("SwitchRole", "Account")">Switch Role</a> <!-- Switch Role Button -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Logout", "Account")">Logout</a>
+                    </li>
+                </ul>
             </div>
-            <ul id="hamburger-menu" class="menu-items">
-                <!-- Lecturer-specific items -->
-                @if (User.IsInRole("Lecturer"))
-                {
-                    <li><a href="/Lecturer/Dashboard">Lecturer Dashboard</a></li>
-                    <li><a href="/Lecturer/SubmitClaim">Submit Claims</a></li>
-                    <!-- Add more lecturer-specific links -->
-                }
-
-                <!-- Coordinator/Manager-specific items -->
-                @if (User.IsInRole("Coordinator") || User.IsInRole("Manager"))
-                {
-                    <li><a href="/Manager/Dashboard">Manager Dashboard</a></li>
-                    <li><a href="/Manager/ApproveClaims">Approve Claims</a></li>
-                    <!-- Add more manager-specific links -->
-                }
-
-                <!-- Common menu item for logout -->
-                <li><a href="/Account/Logout">Logout</a></li>
-            </ul>
         </nav>
+
     </header>
 
     <div class="container">
