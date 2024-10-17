@@ -4,12 +4,35 @@
 <div class="container mt-5">
     <h2 class="text-center" style="color: #4CAF50;">Lecturer Dashboard</h2>
 
-    <!-- Welcome message pop-up for Lecturer -->
-    <div id="welcome-popup" class="card">
-        <h3>Welcome to the Lecturer Dashboard!</h3>
-        <p>Hello, @Context.Session.GetString("Username")! Manage your claims here.</p>
+    <!-- Form to Submit a Claim -->
+    <div class="card mt-4">
+        <h3>Submit a New Claim</h3>
+        <form id="claim-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="ClaimPeriod">Claim Period:</label>
+                <input type="month" id="ClaimPeriod" name="ClaimPeriod" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="HoursWorked">Hours Worked:</label>
+                <input type="number" id="HoursWorked" name="HoursWorked" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="HourlyRate">Hourly Rate:</label>
+                <input type="number" id="HourlyRate" name="HourlyRate" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="AdditionalNotes">Additional Notes:</label>
+                <textarea id="AdditionalNotes" name="AdditionalNotes" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Document">Upload PDF Document:</label>
+                <input type="file" id="Document" name="Document" accept="application/pdf" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Claim</button>
+        </form>
     </div>
 
+    <!-- Display Existing Claims -->
     <div class="card mt-4">
         <h3>Your Claims</h3>
         <table border="1" cellpadding="10" cellspacing="0" width="100%">
@@ -17,102 +40,69 @@
                 <tr>
                     <th>Claim Period</th>
                     <th>Hours Worked</th>
-                    <th>Hourly Rate</th>
-                    <th>Submitted Date</th>
-                    <th>Amount</th>
                     <th>Status</th>
+                    <th>Notes</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="claims-table-body">
                 @foreach (var claim in Model)
                 {
                     <tr>
                         <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                         <td>@claim.HoursWorked</td>
-                        <td>@claim.HourlyRate.ToString("C")</td>
-                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                        <td>@claim.Amount.ToString("C")</td>
-                        <td>
-                            @if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved)
-                            {
-                                <span class="status approved" style="color: green;">Accepted</span>
-                            }
-                            else if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected)
-                            {
-                                <span class="status rejected" style="color: red;">Rejected</span>
-                            }
-                            else
-                            {
-                                <span style="color: orange;">Pending</span>
-                            }
-                        </td>
+                        <td>@claim.Status</td>
+                        <td>@claim.Notes</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-
-    <!-- Popup Container for Accepted/Rejected -->
-    <div id="popup-container" class="popup-container">
-        <div id="popup-message" class="popup-message"></div>
-    </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+
 <script>
-    // Function to show a pop-up when a claim is accepted or rejected
-    function showPopup(status) {
-        var popupContainer = document.getElementById('popup-container');
-        var popupMessage = document.getElementById('popup-message');
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/claimHub")
+        .build();
 
-        if (status === 'accepted') {
-            popupMessage.classList.add('approved');
-            popupMessage.innerHTML = 'Accepted!';
-        } else if (status === 'rejected') {
-            popupMessage.classList.add('rejected');
-            popupMessage.innerHTML = 'Rejected!';
-        }
+    connection.start().catch(err => console.error(err.toString()));
 
-        popupContainer.style.display = 'block';
+    // Submit Claim form
+    $('#claim-form').on('submit', function (e) {
+        e.preventDefault();
 
-        // Hide popup after 8 seconds
-        setTimeout(function () {
-            popupContainer.style.display = 'none';
-            popupMessage.classList.remove('approved', 'rejected');
-        }, 8000);
-    }
+        const claimData = {
+            ClaimPeriod: $('#ClaimPeriod').val(),
+            HoursWorked: $('#HoursWorked').val(),
+            HourlyRate: $('#HourlyRate').val(),
+            Notes: $('#AdditionalNotes').val(),
+        };
 
-    // Show welcome popup and hide it after 3 seconds
-    window.onload = function () {
-        document.getElementById('welcome-popup').style.display = 'block';
-        setTimeout(function () {
-            document.getElementById('welcome-popup').style.display = 'none';
-        }, 3000);
+        const formData = new FormData(this);
 
-        // Trigger popup and alert after page load based on claim statuses
-        var claimStatuses = [];
+        $.ajax({
+            url: '/Lecturer/SubmitClaim', // Endpoint to submit claim
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                connection.invoke('SendClaim', '@Context.Session.GetString("Username")', JSON.stringify(claimData), claimData.Notes)
+                    .catch(err => console.error(err.toString()));
 
-    @foreach (var claim in Model)
-    {
-        <text>
-                    if ('@claim.Status' === 'CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved') {
-                        claimStatuses.push('accepted')
-                        } else if ('@claim.Status' === 'CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected') {
-                        claimStatuses.push('rejected')
-                        }
-        </text>
-    }
+                alert('Claim submitted successfully');
+            }
+        });
+    });
 
-            if (claimStatuses.includes("accepted")) {
-            // Show alert and popup for accepted claim
-            alert("Your claim has been approved!");
-            showPopup("accepted");
-        } else if (claimStatuses.includes("rejected")) {
-            // Show alert and popup for rejected claim
-            alert("Your claim has been rejected.");
-            showPopup("rejected");
-        }
-    };
+    connection.on("ReceiveClaimStatusUpdate", function (claimId, status, managerNote) {
+        alert(`Your claim with ID ${claimId} has been ${status}: ${managerNote}`);
+        location.reload(); // Refresh to update claim statuses
+    });
 </script>
+
 
 <style>
     .popup-container {

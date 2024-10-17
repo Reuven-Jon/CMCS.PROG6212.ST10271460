@@ -25,7 +25,7 @@ builder.Services.AddControllersWithViews();
 // Enable session management
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(30);  // Set session timeout
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -33,9 +33,12 @@ builder.Services.AddSession(options =>
 // Authentication service
 builder.Services.AddAuthentication("CookieAuth").AddCookie("CookieAuth", config =>
 {
-    config.Cookie.Name = "UserLoginCookie";
-    config.LoginPath = "/Account/Login";  // Redirect to login page if unauthorized
+    config.Cookie.Name = "UserLoginCookie";          // Name of the auth cookie
+    config.LoginPath = "/Account/Login";             // Redirect to login page if unauthorized
 });
+
+// SignalR setup
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -46,17 +49,21 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Home/Error");  // Custom error page for production
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseSession();          // Enable session handling
 app.UseAuthentication();   // Enable authentication
 app.UseAuthorization();    // Enable authorization
+
+// Map SignalR hub for real-time communication
+app.MapHub<ClaimHub>("/claimHub");
 
 // Change default route to point to Welcome page
 app.MapControllerRoute(
@@ -64,4 +71,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Welcome}/{id?}");
 
 app.Run();
-

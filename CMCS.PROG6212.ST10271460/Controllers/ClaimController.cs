@@ -42,7 +42,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         public async Task<IActionResult> Manage()
         {
             var claims = await _context.Claims
-                .Include(c => c.Contractor)
+                .Include(c => c.ContractorName)
                 .ToListAsync();
             return View(claims);
         }
