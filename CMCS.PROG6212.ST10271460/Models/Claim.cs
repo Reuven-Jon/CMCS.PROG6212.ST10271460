@@ -4,7 +4,7 @@ namespace CMCS.PROG6212.ST10271460.Models
 {
     public class Claim
     {
-        public int ClaimID { get; set; } // Primary Key
+        public int Id { get; set; } // Primary Key
         public int ContractorID { get; set; } // Foreign Key to User
         public User? Contractor { get; set; } // Nullable property
         public string? ContractorName { get; set; } // Nullable property

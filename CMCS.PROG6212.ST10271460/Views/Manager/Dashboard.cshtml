@@ -1,61 +1,109 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+@{
+    var username = Context.Session.GetString("Username");
+}
 
-<div class="container mt-5">
-    <h2 class="text-center">Coordinator/Manager Dashboard</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Dashboard</title>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
+        }
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Lecturer Name</th>
-                <th>Claim Period</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var claim in Model)
-            {
-                <tr>
-                    <td>@claim.ContractorName</td>
-                    <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                    <td>@claim.Amount.ToString("C")</td>
-                    <td>@claim.Status</td>
-                    <td>
-                        @switch (claim.Status)
-                        {
-                            case CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending:
-                                <form method="post" action="/Manager/ApproveClaim">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="claimId" value="@claim.ClaimID" />
-                                    <button type="submit" class="btn btn-success"
-                                            onclick="return confirm('Are you sure you want to approve this claim?');">
-                                        Approve
-                                    </button>
-                                </form>
-                                <form method="post" action="/Manager/RejectClaim">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="claimId" value="@claim.ClaimID" />
-                                    <button type="submit" class="btn btn-danger"
-                                            onclick="return confirm('Are you sure you want to reject this claim?');">
-                                        Reject
-                                    </button>
-                                </form>
-                                break;
-                            case CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved:
-                                <span class="badge bg-success">Approved</span>
-                                break;
-                            case CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected:
-                                <span class="badge bg-danger">Rejected</span>
-                                break;
-                            default:
-                                <span class="badge bg-secondary">Unknown Status</span>
-                                break;
-                        }
-                    </td>
-                </tr>
+        .header {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #ff6600;
+        }
+
+        .btn {
+            background-color: #ff6600;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #e65c00;
             }
-        </tbody>
-    </table>
-</div>
- 
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Coordinator Dashboard</h1>
+    </div>
+
+    <div class="container">
+        <!-- Welcome message pop-up -->
+        <div id="welcome-popup" class="card">
+            <h2>Welcome to the Coordinator/Manager Dashboard, @username!</h2>
+            <p>Here you can manage and approve claims.</p>
+        </div>
+
+        <!-- Claims management section -->
+        <div class="card">
+            <h2>Manage Claims</h2>
+            <table border="1" cellpadding="10" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Lecturer Name</th>
+                        <th>Claim Period</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.ContractorName</td>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                            <td>@claim.Status</td>
+                            <td>
+                                <a href="@Url.Action("ApproveClaim", "Manager", new { id = claim.Id })" class="btn">Approve</a>
+                                <a href="@Url.Action("RejectClaim", "Manager", new { id = claim.Id })" class="btn">Reject</a>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Show welcome popup and fade out after 3 seconds
+        setTimeout(function () {
+            document.getElementById('welcome-popup').style.display = 'none';
+        }, 3000);
+    </script>
+</body>
+</html>
+
