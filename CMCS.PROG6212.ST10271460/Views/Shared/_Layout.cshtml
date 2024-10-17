@@ -4,33 +4,99 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CMCS.PROG6212.ST10271460</title>
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Site-specific CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CMCS.PROG6212.ST10271460.styles.css" asp-append-version="true" />
+    <style>
+        /* Hamburger Menu CSS */
+        .hamburger {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background-color: #fff;
+            margin: 6px auto;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn {
+            cursor: pointer;
+            display: inline-block;
+        }
+
+            .menu-btn.open .hamburger:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 5px);
+            }
+
+            .menu-btn.open .hamburger:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-btn.open .hamburger:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -5px);
+            }
+
+        .menu-items {
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .menu-items.open {
+                display: block;
+            }
+
+            .menu-items li {
+                padding: 10px;
+                background-color: #333;
+                color: white;
+            }
+
+                .menu-items li a {
+                    color: white;
+                    text-decoration: none;
+                }
+
+                .menu-items li:hover {
+                    background-color: #555;
+                }
+    </style>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="#">CMCS</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    @if (User.IsInRole("Lecturer"))
-                    {
-                        <li class="nav-item"><a class="nav-link" href="/Lecturer/Dashboard">Lecturer Dashboard</a></li>
-                    }
-                    else if (User.IsInRole("Coordinator") || User.IsInRole("Manager"))
-                    {
-                        <li class="nav-item"><a class="nav-link" href="/Manager/Dashboard">Manager Dashboard</a></li>
-                    }
-                    <li class="nav-item"><a class="nav-link" href="/Account/Logout">Logout</a></li>
-                </ul>
+            <div class="menu-btn" onclick="toggleMenu()">
+                <div class="hamburger"></div>
+                <div class="hamburger"></div>
+                <div class="hamburger"></div>
             </div>
-        </nav>
+            <ul id="hamburger-menu" class="menu-items">
+                <!-- Lecturer-specific items -->
+                @if (User.IsInRole("Lecturer"))
+                {
+                    <li><a href="/Lecturer/Dashboard">Lecturer Dashboard</a></li>
+                    <li><a href="/Lecturer/SubmitClaim">Submit Claims</a></li>
+                    <!-- Add more lecturer-specific links -->
+                }
 
+                <!-- Coordinator/Manager-specific items -->
+                @if (User.IsInRole("Coordinator") || User.IsInRole("Manager"))
+                {
+                    <li><a href="/Manager/Dashboard">Manager Dashboard</a></li>
+                    <li><a href="/Manager/ApproveClaims">Approve Claims</a></li>
+                    <!-- Add more manager-specific links -->
+                }
+
+                <!-- Common menu item for logout -->
+                <li><a href="/Account/Logout">Logout</a></li>
+            </ul>
+        </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -42,9 +108,21 @@
             &copy; 2024 - CMCS.PROG6212.ST10271460 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <!-- JavaScript for the hamburger menu functionality -->
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById('hamburger-menu');
+            var menuBtn = document.querySelector('.menu-btn');
+            menu.classList.toggle('open');
+            menuBtn.classList.toggle('open');
+        }
+    </script>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

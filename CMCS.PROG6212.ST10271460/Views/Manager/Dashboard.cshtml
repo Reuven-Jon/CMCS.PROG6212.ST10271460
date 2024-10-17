@@ -76,6 +76,7 @@
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Actions</th>
+                        <th>Document</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,14 +90,23 @@
                             <td>
                                 <a href="@Url.Action("ApproveClaim", "Manager", new { id = claim.Id })" class="btn">Approve</a>
                                 <a href="@Url.Action("RejectClaim", "Manager", new { id = claim.Id })" class="btn">Reject</a>
-
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                                {
+                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
+                                }
+                                else
+                                {
+                                    <span>No document</span>
+                                }
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-    </div>
+        </div>
 
     <script>
         // Show welcome popup and fade out after 3 seconds

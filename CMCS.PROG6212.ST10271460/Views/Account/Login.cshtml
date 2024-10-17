@@ -3,24 +3,60 @@
 <h2>Login as @ViewBag.Role</h2>
 
 <form method="post" asp-action="Login">
-    <input type="hidden" asp-for="Role" value="@ViewBag.Role" />
-
     <div class="form-group">
         <label for="username">Username</label>
         <input asp-for="Username" class="form-control" required />
+        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="password">Password</label>
         <input asp-for="Password" class="form-control" type="password" required />
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
+
+    <div class="form-group">
+        <label for="role">Role</label>
+        <select asp-for="Role" class="form-control" required>
+            <option value="Lecturer">Lecturer</option>
+            <option value="Manager">Manager</option>
+            <option value="Coordinator">Coordinator</option>
+        </select>
+    </div>
+
+    <!-- 'I' Info Button for showing Username/Password rules -->
+    <div class="form-group">
+        <button type="button" class="btn btn-info" id="info-button">ℹ️</button>
+    </div>
+
+    <div id="info-popup" style="display: none; padding: 10px; border: 1px solid #ccc; background-color: #f8f9fa;">
+        <strong>Username Rules:</strong>
+        <ul>
+            <li>Must be exactly 4 characters long.</li>
+        </ul>
+        <strong>Password Rules:</strong>
+        <ul>
+            <li>Must be exactly 8 characters long.</li>
+            <li>No spaces allowed.</li>
+            <li>No mathematical symbols like =, +, etc.</li>
+        </ul>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
 
     @if (ViewBag.ErrorMessage != null)
     {
         <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
     }
-
-    <button type="submit" class="btn btn-primary">Login</button>
 </form>
+
+@section Scripts {
+    <script>
+        document.getElementById("info-button").addEventListener("click", function () {
+            var popup = document.getElementById("info-popup");
+            popup.style.display = popup.style.display === "none" ? "block" : "none";
+        });
+    </script>
+}
 
 

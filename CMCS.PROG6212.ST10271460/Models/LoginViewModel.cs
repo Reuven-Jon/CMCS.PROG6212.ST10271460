@@ -1,12 +1,23 @@
-﻿namespace CMCS.PROG6212.ST10271460.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CMCS.PROG6212.ST10271460.Models
 {
     public class LoginViewModel
     {
-        public string? Username { get; set; }  // Nullable string
+        [Required]
+        [MinLength(4, ErrorMessage = "Username must be exactly 4 characters.")]
+        [MaxLength(4, ErrorMessage = "Username must be exactly 4 characters.")]
+        public string Username { get; set; } = string.Empty;
 
-        public string? Password { get; set; }  // Nullable string
+        [Required]
+        [MinLength(8, ErrorMessage = "Password must be exactly 8 characters.")]
+        [MaxLength(8, ErrorMessage = "Password must be exactly 8 characters.")]
+        [RegularExpression(@"^[^\s=+]*$", ErrorMessage = "Password cannot contain spaces or mathematical symbols.")]
+        public string Password { get; set; } = string.Empty;
 
-        public string? Role { get; set; }      // Nullable string
+        [Required]
+        public string Role { get; set; } = string.Empty;
     }
 }
+
 

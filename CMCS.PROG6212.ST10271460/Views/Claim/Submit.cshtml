@@ -1,9 +1,8 @@
 ﻿@model CMCS.PROG6212.ST10271460.Models.Claim
 
-
 <h2>Submit a New Claim</h2>
 
-<form asp-action="SubmitClaim" method="post">
+<form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="ClaimPeriod">Claim Period</label>
         <input asp-for="ClaimPeriod" class="form-control" type="date" required />
@@ -19,23 +18,15 @@
         <input asp-for="HourlyRate" class="form-control" type="number" required />
     </div>
 
+    <!-- File upload for PDF -->
     <div class="form-group">
-        <label for="Bonuses">Bonuses</label>
-        <input asp-for="Bonuses" class="form-control" type="number" />
-    </div>
-
-    <div class="form-group">
-        <label for="Expenses">Expenses</label>
-        <input asp-for="Expenses" class="form-control" type="number" />
-    </div>
-
-    <div class="form-group">
-        <label for="Deductions">Deductions</label>
-        <input asp-for="Deductions" class="form-control" type="number" />
+        <label for="Document">Upload Supporting Document (optional)</label>
+        <input type="file" name="Document" class="form-control" accept=".pdf" />
     </div>
 
     <button type="submit" class="btn btn-primary">Submit Claim</button>
 </form>
+
 
 
 

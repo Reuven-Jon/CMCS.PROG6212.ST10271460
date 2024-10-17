@@ -1,110 +1,141 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
-@{
-    var username = Context.Session.GetString("Username");
-}
+<link rel="stylesheet" href="~/css/styles.css">
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecturer Dashboard</title>
-    <style>
-        body {
-            background-color: #f4f7f6;
-            font-family: Arial, sans-serif;
-        }
+<div class="container mt-5">
+    <h2 class="text-center" style="color: #4CAF50;">Lecturer Dashboard</h2>
 
-        .header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .container {
-            padding: 20px;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #4CAF50;
-        }
-
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-            .btn:hover {
-                background-color: #45a049;
-            }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Lecturer Dashboard</h1>
-    </div>
-
-    <div class="container">
-        <!-- Welcome message pop-up -->
-        <div id="welcome-popup" class="card">
-            <h2>Welcome to the Lecturer Dashboard, @username!</h2>
-            <p>This is your space to manage your claims.</p>
-        </div>
-
-        <!-- Claims summary section -->
-        <div class="card">
-            <h2>Your Claims</h2>
-            <table border="1" cellpadding="10" cellspacing="0" width="100%">
-                <thead>
+    <div class="card">
+        <h3>Your Claims</h3>
+        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Claim Period</th>
+                    <th>Hours Worked</th>
+                    <th>Hourly Rate</th>
+                    <th>Submitted Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
                     <tr>
-                        <th>Claim Period</th>
-                        <th>Hours Worked</th>
-                        <th>Hourly Rate</th>
-                        <th>Submitted Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
+                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                        <td>@claim.HoursWorked</td>
+                        <td>@claim.HourlyRate.ToString("C")</td>
+                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                        <td>@claim.Amount.ToString("C")</td>
+                        <td>
+                            @if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved)
+                            {
+                                <span class="status approved" style="color: green;">Accepted</span>
+                            }
+                            else if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected)
+                            {
+                                <span class="status rejected" style="color: red;">Rejected</span>
+                            }
+                            else
+                            {
+                                <span style="color: orange;">Pending</span>
+                            }
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model)
-                    {
-                        <tr>
-                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td>@claim.HourlyRate.ToString("C")</td>
-                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                            <td>@claim.Amount.ToString("C")</td>
-                            <td>@claim.Status</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Button to Submit a New Claim -->
-        <a href="@Url.Action("SubmitClaim", "Lecturer")" class="btn">Submit New Claim</a>
+                }
+            </tbody>
+        </table>
     </div>
 
-    <script>
-        // Show welcome popup and fade out after 3 seconds
+    <!-- Popup Container for Accepted/Rejected -->
+    <div id="popup-container" class="popup-container">
+        <div id="popup-message" class="popup-message"></div>
+    </div>
+</div>
+
+<script>
+    // Function to show a pop-up when a claim is accepted or rejected
+    function showPopup(status) {
+        var popupContainer = document.getElementById('popup-container');
+        var popupMessage = document.getElementById('popup-message');
+
+        if (status === 'accepted') {
+            popupMessage.classList.add('approved');
+            popupMessage.innerHTML = 'Accepted!';
+        } else if (status === 'rejected') {
+            popupMessage.classList.add('rejected');
+            popupMessage.innerHTML = 'Rejected!';
+        }
+
+        popupContainer.style.display = 'block';
+
+        // Hide popup after 8 seconds
         setTimeout(function () {
-            document.getElementById('welcome-popup').style.display = 'none';
-        }, 3000);
-    </script>
-</body>
-</html>
+            popupContainer.style.display = 'none';
+            popupMessage.classList.remove('approved', 'rejected');
+        }, 8000);
+    }
+
+    // Trigger popup after page load based on claim statuses
+    window.onload = function () {
+        var claimStatuses = [];
+
+    @foreach (var claim in Model)
+    {
+        <text>
+                    if ('@claim.Status' === 'CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved') {
+                        claimStatuses.push('accepted')
+                        } else if ('@claim.Status' === 'CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected') {
+                        claimStatuses.push('rejected')
+                        }
+        </text>
+    }
+
+            if (claimStatuses.includes('accepted')) {
+            showPopup('accepted');
+        } else if (claimStatuses.includes('rejected')) {
+            showPopup('rejected');
+        }
+    };
+</script>
+
+
+<style>
+    .popup-container {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+
+    .popup-message {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        font-size: 24px;
+        color: white;
+        text-align: center;
+    }
+
+    .popup-message.approved {
+        background-color: green;
+        animation: bounce 2s infinite;
+    }
+
+    .popup-message.rejected {
+        background-color: red;
+        animation: bounce 2s infinite;
+    }
+
+   
+
+</style>
+
+
+
+
 
