@@ -39,32 +39,30 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                 .ToList();
         }
 
-        // Submit a new claim
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SubmitClaim(Claim claim, IFormFile Document)
         {
             if (ModelState.IsValid)
             {
-                claim.ContractorName = HttpContext.Session.GetString("Username") ?? "Unknown";
-                claim.DateSubmitted = DateTime.Now;
-                claim.Status = ClaimStatus.Pending;
-
-                // Handle document upload
                 if (Document != null && Document.Length > 0)
                 {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/documents");
-                    var filePath = Path.Combine(uploadsFolder, Document.FileName);
+                    // Save the PDF file to wwwroot/uploads/lecturer_docs
+                    var fileName = Path.GetFileName(Document.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/lecturer_docs", fileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         Document.CopyTo(stream);
                     }
 
-                    // Store the document path in the claim
-                    claim.DocumentPath = "/documents/" + Document.FileName;
+                    // Set the document path to be saved in the database
+                    claim.DocumentPath = "/uploads/lecturer_docs/" + fileName;
                 }
 
+                claim.ContractorName = HttpContext.Session.GetString("Username") ?? "Unknown";
+                claim.Status = ClaimStatus.Pending;
+                claim.DateSubmitted = DateTime.Now;
                 _context.Claims.Add(claim);
                 _context.SaveChanges();
 
@@ -76,5 +74,4 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
     }
 }
-
 

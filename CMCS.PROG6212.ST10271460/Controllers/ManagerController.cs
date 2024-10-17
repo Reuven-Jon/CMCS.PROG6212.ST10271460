@@ -33,8 +33,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         // Manager can approve a claim
         public IActionResult ApproveClaim(int id)
         {
-            // Find the claim by its ID (primary key)
-            var claim = _context.Claims.FirstOrDefault(c => c.Id == id);  // Change ClaimID to Id
+            var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
             if (claim != null)
             {
                 claim.Status = ClaimStatus.Approved;
@@ -45,8 +44,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
         public IActionResult RejectClaim(int id)
         {
-            // Find the claim by its ID (primary key)
-            var claim = _context.Claims.FirstOrDefault(c => c.Id == id);  // Change ClaimID to Id
+            var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
             if (claim != null)
             {
                 claim.Status = ClaimStatus.Rejected;
@@ -54,6 +52,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             }
             return RedirectToAction("Dashboard");
         }
+
 
     }
 }

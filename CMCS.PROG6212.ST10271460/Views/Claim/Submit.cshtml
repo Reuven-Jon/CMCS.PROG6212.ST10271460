@@ -2,7 +2,7 @@
 
 <h2>Submit a New Claim</h2>
 
-<form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+<form asp-action="SubmitClaim" enctype="multipart/form-data" method="post">
     <div class="form-group">
         <label for="ClaimPeriod">Claim Period</label>
         <input asp-for="ClaimPeriod" class="form-control" type="date" required />
@@ -18,14 +18,20 @@
         <input asp-for="HourlyRate" class="form-control" type="number" required />
     </div>
 
-    <!-- File upload for PDF -->
     <div class="form-group">
-        <label for="Document">Upload Supporting Document (optional)</label>
-        <input type="file" name="Document" class="form-control" accept=".pdf" />
+        <label for="Amount">Amount</label>
+        <input asp-for="Amount" class="form-control" type="number" readonly />
+    </div>
+
+    <!-- File upload for the document -->
+    <div class="form-group">
+        <label for="Document">Upload PDF Document</label>
+        <input type="file" name="Document" class="form-control" accept=".pdf" required />
     </div>
 
     <button type="submit" class="btn btn-primary">Submit Claim</button>
 </form>
+
 
 
 

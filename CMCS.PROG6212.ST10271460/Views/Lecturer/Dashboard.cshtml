@@ -4,7 +4,13 @@
 <div class="container mt-5">
     <h2 class="text-center" style="color: #4CAF50;">Lecturer Dashboard</h2>
 
-    <div class="card">
+    <!-- Welcome message pop-up for Lecturer -->
+    <div id="welcome-popup" class="card">
+        <h3>Welcome to the Lecturer Dashboard!</h3>
+        <p>Hello, @Context.Session.GetString("Username")! Manage your claims here.</p>
+    </div>
+
+    <div class="card mt-4">
         <h3>Your Claims</h3>
         <table border="1" cellpadding="10" cellspacing="0" width="100%">
             <thead>
@@ -75,8 +81,14 @@
         }, 8000);
     }
 
-    // Trigger popup after page load based on claim statuses
+    // Show welcome popup and hide it after 3 seconds
     window.onload = function () {
+        document.getElementById('welcome-popup').style.display = 'block';
+        setTimeout(function () {
+            document.getElementById('welcome-popup').style.display = 'none';
+        }, 3000);
+
+        // Trigger popup and alert after page load based on claim statuses
         var claimStatuses = [];
 
     @foreach (var claim in Model)
@@ -90,14 +102,17 @@
         </text>
     }
 
-            if (claimStatuses.includes('accepted')) {
-            showPopup('accepted');
-        } else if (claimStatuses.includes('rejected')) {
-            showPopup('rejected');
+            if (claimStatuses.includes("accepted")) {
+            // Show alert and popup for accepted claim
+            alert("Your claim has been approved!");
+            showPopup("accepted");
+        } else if (claimStatuses.includes("rejected")) {
+            // Show alert and popup for rejected claim
+            alert("Your claim has been rejected.");
+            showPopup("rejected");
         }
     };
 </script>
-
 
 <style>
     .popup-container {
@@ -121,18 +136,23 @@
         text-align: center;
     }
 
-    .popup-message.approved {
-        background-color: green;
-        animation: bounce 2s infinite;
+        .popup-message.approved {
+            background-color: green;
+            animation: bounce 2s infinite;
+        }
+
+        .popup-message.rejected {
+            background-color: red;
+            animation: bounce 2s infinite;
+        }
+
+    .card {
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
-    .popup-message.rejected {
-        background-color: red;
-        animation: bounce 2s infinite;
-    }
-
-   
-
 </style>
 
 
