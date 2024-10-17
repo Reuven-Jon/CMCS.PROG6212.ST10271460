@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using CMCS.PROG6212.ST10271460.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -9,35 +8,34 @@ namespace CMCS.PROG6212.ST10271460.Controllers
     {
         public IActionResult Login(string role)
         {
-            ViewBag.Role = role;
+            ViewBag.Role = role;  // Assign role for display
             return View();
         }
 
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            // Validate username and password length in the model itself
-            if (!ModelState.IsValid)
+            // Validate the form input
+            if (IsValidLogin(model.Username, model.Password))
             {
-                ViewBag.ErrorMessage = "Invalid login attempt. Please check your credentials.";
-                return View(model);
+                // Store the user session
+                HttpContext.Session.SetString("Username", model.Username);
+                HttpContext.Session.SetString("UserRole", model.Role);
+
+                // Redirect to the appropriate dashboard based on role
+                if (model.Role == "Lecturer")
+                {
+                    return RedirectToAction("Dashboard", "Lecturer");
+                }
+                else if (model.Role == "Manager" || model.Role == "Coordinator")
+                {
+                    return RedirectToAction("Dashboard", "Manager");
+                }
             }
 
-            // Dummy logic to allow login for valid usernames and passwords
-            HttpContext.Session.SetString("Username", model.Username);
-            HttpContext.Session.SetString("Role", model.Role);
-
-            if (model.Role == "Lecturer")
-            {
-                return RedirectToAction("Dashboard", "Lecturer");
-            }
-            else if (model.Role == "Manager" || model.Role == "Coordinator")
-            {
-                return RedirectToAction("Dashboard", "Manager");
-            }
-
-            ViewBag.ErrorMessage = "Invalid role specified.";
-            return View(model);
+            // If validation fails, show an error message
+            ViewBag.ErrorMessage = "Invalid login credentials.";
+            return View(model);  // Return the login view
         }
 
         public IActionResult Logout()
@@ -45,8 +43,22 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
+        // Helper function for login validation
+        private bool IsValidLogin(string username, string password)
+        {
+            // Check for username and password length and characters as per requirements
+            if (username.Length == 4 && password.Length == 8 &&
+                !password.Any(char.IsWhiteSpace) &&
+                !password.Contains("=") && !password.Contains("+"))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
+
 
 
 

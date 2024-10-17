@@ -1,82 +1,101 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CMCS.PROG6212.ST10271460.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using CMCS.PROG6212.ST10271460.Models;
+using System.Linq;
 
-namespace CMCS.PROG6212.ST10271460.Controllers
+public class LecturerController : Controller
 {
-    public class LecturerController : Controller
+    private readonly ApplicationDbContext _context;
+    private readonly IWebHostEnvironment _hostingEnvironment;
+
+    public LecturerController(ApplicationDbContext context, IWebHostEnvironment hostingEnvironment)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+        _hostingEnvironment = hostingEnvironment;
+    }
 
-        public LecturerController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+    // Submit a claim view
+    public IActionResult SubmitClaim()
+    {
+        return View();  // Show the form for submitting claims
+    }
 
-        public IActionResult Dashboard()
+    // Submit the claim and save it to the database
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile Document)
+    {
+        if (ModelState.IsValid)
         {
-            var username = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(username))
+            var lecturerId = User.Identity?.Name; // Get lecturer's identity
+            if (lecturerId == null)
             {
-                return RedirectToAction("Login", "Account");
+                ModelState.AddModelError(string.Empty, "User is not logged in.");
+                return View(model);
             }
 
-            // Get the lecturer's claims
-            var claims = GetClaimsForLecturer(username);
-
-            ViewBag.Username = username;  // Pass username to the view
-            return View(claims);  // Return the list of claims
-        }
-
-
-        // Fetch claims for the logged-in lecturer
-        private List<Claim> GetClaimsForLecturer(string username)
-        {
-            return _context.Claims
-                .Where(c => c.ContractorName == username)
-                .ToList();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-       
-        public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile Document)
-        {
-            if (ModelState.IsValid)
+            var claim = new Claim
             {
-                var claim = new Claim
-                {
-                    LecturerId = User.Identity.Name,  // Assuming lecturer is logged in
-                    LecturerName = Context.Session.GetString("Username"),
-                    ClaimPeriod = model.ClaimPeriod,
-                    HoursWorked = model.HoursWorked,
-                    HourlyRate = model.HourlyRate,
-                    Amount = model.HoursWorked * model.HourlyRate,
-                    DateSubmitted = DateTime.Now,
-                    Status = "Pending"
-                };
+                LecturerId = lecturerId,
+                LecturerName = HttpContext.Session.GetString("Username"),
+                ClaimPeriod = model.ClaimPeriod,
+                HoursWorked = model.HoursWorked,
+                HourlyRate = model.HourlyRate,
+                Amount = model.HoursWorked * model.HourlyRate,
+                DateSubmitted = DateTime.Now,
+                Status = "Pending"
+            };
 
-                if (Document != null && Document.Length > 0)
+            // Handle file upload
+            if (Document != null && Document.Length > 0)
+            {
+                var documentPath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Document.FileName);
+                using (var stream = new FileStream(documentPath, FileMode.Create))
                 {
-                    var documentPath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Document.FileName);
-                    using (var stream = new FileStream(documentPath, FileMode.Create))
-                    {
-                        await Document.CopyToAsync(stream);
-                    }
-                    claim.DocumentPath = "/uploads/" + Document.FileName;
+                    await Document.CopyToAsync(stream);
                 }
-
-                _context.Claims.Add(claim);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index"); // Redirect to Lecturer Dashboard
+                claim.DocumentPath = "/uploads/" + Document.FileName;
             }
 
-            return View(model);
+            _context.Claims.Add(claim);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("YourClaims"); // Redirect to "Your Claims" after successful submission
         }
 
+        return View(model); // Return to the form in case of validation failure
+    }
+
+    // Display all claims submitted by the lecturer
+    public IActionResult YourClaims()
+    {
+        var username = HttpContext.Session.GetString("Username");
+        if (string.IsNullOrEmpty(username))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Get the lecturer's claims
+        var claims = _context.Claims.Where(c => c.LecturerName == username).ToList();
+
+        return View(claims);  // Return the list of claims
+    }
+
+    public IActionResult Dashboard()
+    {
+        var username = HttpContext.Session.GetString("Username");
+        if (string.IsNullOrEmpty(username))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Fetch the lecturer's claims
+        var claims = _context.Claims.Where(c => c.LecturerName == username).ToList();
+
+        return View(claims);  // Return the list of claims to the Dashboard view
     }
 }
 

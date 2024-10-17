@@ -1,168 +1,200 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
-<link rel="stylesheet" href="~/css/styles.css">
 
-<div class="container mt-5">
-    <h2 class="text-center" style="color: #4CAF50;">Lecturer Dashboard</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturer Dashboard</title>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
+        }
 
-    <!-- Form to Submit a Claim -->
-    <div class="card mt-4">
-        <h3>Submit a New Claim</h3>
-        <form id="claim-form" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="ClaimPeriod">Claim Period:</label>
-                <input type="month" id="ClaimPeriod" name="ClaimPeriod" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label for="HoursWorked">Hours Worked:</label>
-                <input type="number" id="HoursWorked" name="HoursWorked" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label for="HourlyRate">Hourly Rate:</label>
-                <input type="number" id="HourlyRate" name="HourlyRate" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label for="AdditionalNotes">Additional Notes:</label>
-                <textarea id="AdditionalNotes" name="AdditionalNotes" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="Document">Upload PDF Document:</label>
-                <input type="file" id="Document" name="Document" accept="application/pdf" class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-primary">Submit Claim</button>
-        </form>
+        .container {
+            padding: 20px;
+            background-color: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status.pending {
+            color: orange;
+        }
+
+        .status.accepted {
+            color: green;
+        }
+
+        .status.rejected {
+            color: red;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .hamburger .bar {
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+            margin: 6px auto;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active .bar:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 5px);
+        }
+
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .bar:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -5px);
+        }
+
+        .nav-menu {
+            display: none;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu.active {
+            display: block;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .nav-menu a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="hamburger" id="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
     </div>
 
-    <!-- Display Existing Claims -->
-    <!-- Show Lecturer Claims -->
-    <div class="card mt-4">
-        <h3>Your Claims</h3>
-        <table border="1" cellpadding="10" cellspacing="0" width="100%">
-            <thead>
+    <div class="nav-menu" id="nav-menu">
+        <a href="/Lecturer/SubmitClaim">Submit Claim</a>
+        <a href="/Lecturer/Dashboard">Your Claims</a>
+        <a href="/Account/Logout">Logout</a>
+    </div>
+
+    <h2>Lecturer Dashboard</h2>
+
+    <!-- Welcome Pop-up -->
+    <div id="welcome-popup" style="background-color: #f4f7f6; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px;">
+        <h4>Welcome to the Lecturer Dashboard!</h4>
+        <p>Manage your claims here.</p>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Claim Period</th>
+                <th>Hours Worked</th>
+                <th>Hourly Rate</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date Submitted</th>
+                <th>Document</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in Model)
+            {
                 <tr>
-                    <th>Claim Period</th>
-                    <th>Hours Worked</th>
-                    <th>Hourly Rate</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Submitted Date</th>
-                    <th>Document</th>
+                    <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                    <td>@claim.HoursWorked</td>
+                    <td>@claim.HourlyRate.ToString("C")</td>
+                    <td>@claim.Amount.ToString("C")</td>
+                    <td><span class="status @claim.Status.ToLower()">@claim.Status</span></td>
+                    <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(claim?.DocumentPath))
+                        {
+                            <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
+                        }
+                        else
+                        {
+                            <span>No document</span>
+                        }
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var claim in Model)
-                {
-                    <tr>
-                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                        <td>@claim.HoursWorked</td>
-                        <td>@claim.HourlyRate.ToString("C")</td>
-                        <td>@claim.Amount.ToString("C")</td>
-                        <td>@claim.Status</td>
-                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(claim.DocumentPath))
-                            {
-                                <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
-                            }
-                            else
-                            {
-                                <span>No document</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
-
-<script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/claimHub")
-        .build();
-
-    connection.start().catch(err => console.error(err.toString()));
-
-    // Submit Claim form
-    $('#claim-form').on('submit', function (e) {
-        e.preventDefault();
-
-        const claimData = {
-            ClaimPeriod: $('#ClaimPeriod').val(),
-            HoursWorked: $('#HoursWorked').val(),
-            HourlyRate: $('#HourlyRate').val(),
-            Notes: $('#AdditionalNotes').val(),
-        };
-
-        const formData = new FormData(this);
-
-        $.ajax({
-            url: '/Lecturer/SubmitClaim', // Endpoint to submit claim
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (response) {
-                connection.invoke('SendClaim', '@Context.Session.GetString("Username")', JSON.stringify(claimData), claimData.Notes)
-                    .catch(err => console.error(err.toString()));
-
-                alert('Claim submitted successfully');
             }
+        </tbody>
+    </table>
+
+    <script>
+        // Hide the welcome popup after 5 seconds
+        setTimeout(function () {
+            document.getElementById('welcome-popup').style.display = 'none';
+        }, 5000);
+
+        // Hamburger menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
         });
-    });
-
-    connection.on("ReceiveClaimStatusUpdate", function (claimId, status, managerNote) {
-        alert(`Your claim with ID ${claimId} has been ${status}: ${managerNote}`);
-        location.reload(); // Refresh to update claim statuses
-    });
-</script>
-
-
-<style>
-    .popup-container {
-        display: none;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-    }
-
-    .popup-message {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        font-size: 24px;
-        color: white;
-        text-align: center;
-    }
-
-        .popup-message.approved {
-            background-color: green;
-            animation: bounce 2s infinite;
-        }
-
-        .popup-message.rejected {
-            background-color: red;
-            animation: bounce 2s infinite;
-        }
-
-    .card {
-        padding: 20px;
-        margin-bottom: 20px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-</style>
-
-
-
+    </script>
+</body>
+</html>
 
 

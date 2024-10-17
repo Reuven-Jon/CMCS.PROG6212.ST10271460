@@ -1,157 +1,79 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
-@{
-    var username = Context.Session.GetString("Username");
-}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coordinator Dashboard</title>
-    <style>
-        body {
-            background-color: #f4f7f6;
-            font-family: Arial, sans-serif;
-        }
+<div class="container mt-5">
+    <h2 class="text-center" style="color: #ff6600;">Coordinator/Manager Dashboard</h2>
 
-        .header {
-            background-color: #ff6600;
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .container {
-            padding: 20px;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #ff6600;
-        }
-
-        .btn {
-            background-color: #ff6600;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-            .btn:hover {
-                background-color: #e65c00;
-            }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Coordinator Dashboard</h1>
+    <!-- Welcome message pop-up -->
+    <div id="welcome-popup" style="background-color: #f4f7f6; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px;">
+        <h4>Welcome to the Coordinator/Manager Dashboard!</h4>
+        <p>Here you can manage and approve claims.</p>
     </div>
 
-    <div class="container">
-        <!-- Welcome message pop-up -->
-        <div id="welcome-popup" class="card">
-            <h2>Welcome to the Coordinator/Manager Dashboard, @username!</h2>
-            <p>Here you can manage and approve claims.</p>
-        </div>
-
-        <!-- Manage Claims -->
-        <!-- Manage Claims -->
-        <div class="card mt-4">
-            <h3>Manage Claims</h3>
-            <table border="1" cellpadding="10" cellspacing="0" width="100%">
-                <thead>
+    <!-- Claims Table -->
+    <div class="card mt-4">
+        <h3>Manage Claims</h3>
+        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Lecturer Name</th>
+                    <th>Claim Period</th>
+                    <th>Hours Worked</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                    <th>Document</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
                     <tr>
-                        <th>Lecturer Name</th>
-                        <th>Claim Period</th>
-                        <th>Hours Worked</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                        <th>Notes</th>
-                        <th>Document</th>
+                        <td>@claim.LecturerName</td>
+                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                        <td>@claim.HoursWorked</td>
+                        <td><span class="status @claim.Status.ToLower()">@claim.Status</span></td>
+                        <td>
+                            <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
+                            <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                            {
+                                <a href="@claim.DocumentPath" target="_blank">View Document</a>
+                            }
+                            else
+                            {
+                                <span>No document</span>
+                            }
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model)
-                    {
-                        <tr>
-                            <td>@claim.LecturerName</td>
-                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td>@claim.Status</td>
-                            <td>
-                                <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
-                                <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
-                            </td>
-                            <td>@claim.Notes</td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(claim.DocumentPath))
-                                {
-                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
-                                }
-                                else
-                                {
-                                    <span>No document</span>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <script>
-            function updateClaimStatus(claimId, status) {
-                const managerNote = prompt("Enter a note for this claim:");
-                if (managerNote) {
-                    $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
-                        alert(`Claim ${status}`);
-                        location.reload(); // Refresh the page after status update
-                    });
                 }
-            }
-        </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+            </tbody>
+        </table>
+    </div>
 
     <script>
-        // Establish SignalR connection
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/claimHub")
-            .build();
-
-        connection.start().catch(err => console.error(err.toString()));
-
-        // Function to handle updating claim status with notes
         function updateClaimStatus(claimId, status) {
             const managerNote = prompt("Enter a note for this claim:");
             if (managerNote) {
                 $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
-                    connection.invoke('UpdateClaimStatus', claimId, status, managerNote)
-                        .catch(err => console.error(err.toString()));
-
                     alert(`Claim ${status}`);
-                    location.reload(); // Refresh the page after status update
+                    location.reload(); // Reload the page after status update
                 });
             }
         }
 
-        // Hide the welcome popup after 8 seconds
+        // Hide the welcome popup after 5 seconds
         setTimeout(function () {
             document.getElementById('welcome-popup').style.display = 'none';
-        }, 8000);
+        }, 5000);
     </script>
-</body>
-</html>
+</div>
+
+
+
+
+
+
+
+
 

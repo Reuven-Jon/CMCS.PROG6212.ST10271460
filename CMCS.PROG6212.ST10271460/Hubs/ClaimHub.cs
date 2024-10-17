@@ -7,6 +7,16 @@ public class ClaimHub : Hub
     {
         await Clients.All.SendAsync("ReceiveClaimUpdate", claimId, status, note);
     }
+
+    public async Task SendClaimUpdate()
+    {
+        await Clients.All.SendAsync("RefreshClaims");
+    }
 }
+
+
+
+
+
 
 

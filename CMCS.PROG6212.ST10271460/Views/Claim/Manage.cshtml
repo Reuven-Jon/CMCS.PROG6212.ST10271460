@@ -1,89 +1,92 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Manage Claims</title>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <style>
-            .container {
-                margin-top: 20px;
-            }
-            .search-bar {
-                margin-bottom: 20px;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            table, th, td {
-                border: 1px solid #ddd;
-                padding: 8px;
-            }
-            th {
-                background-color: #f4f4f4;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h2>Manage Claims</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Claims</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .container {
+            margin-top: 20px;
+        }
 
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <label for="search">Search by Lecturer Name:</label>
-                <input type="text" id="search" placeholder="Start typing a name..." onkeyup="filterClaims()">
-            </div>
+        .search-bar {
+            margin-bottom: 20px;
+        }
 
-            <!-- Claims Table -->
-            <table id="claimsTable">
-                <thead>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Manage Claims</h2>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <label for="search">Search by Lecturer Name:</label>
+            <input type="text" id="search" placeholder="Start typing a name..." onkeyup="filterClaims()">
+        </div>
+
+        <!-- Claims Table -->
+        <table id="claimsTable">
+            <thead>
+                <tr>
+                    <th>Lecturer Name</th>
+                    <th>Claim Period</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
                     <tr>
-                        <th>Lecturer Name</th>
-                        <th>Claim Period</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model)
-                    {
-                    <tr>
-                        <td>@claim.ContractorName</td>
+                        <td>@claim.LecturerName</td> <!-- Changed from ContractorName to LecturerName -->
                         <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                         <td>@claim.Amount.ToString("C")</td>
                         <td>@claim.Status</td>
                     </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterClaims() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("search");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("claimsTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows and hide those that don't match the search query
+            for (i = 1; i < tr.length; i++) { // Start from 1 to skip table headers
+                td = tr[i].getElementsByTagName("td")[0]; // Check the first column (Lecturer Name)
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
                     }
-                </tbody>
-            </table>
-        </div>
-
-        <script>
-    function filterClaims() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("search");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("claimsTable");
-        tr = table.getElementsByTagName("tr");
-
-        // Loop through all table rows and hide those that don't match the search query
-        for (i = 1; i < tr.length; i++) { // Start from 1 to skip table headers
-            td = tr[i].getElementsByTagName("td")[0]; // Check the first column (Lecturer Name)
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
                 }
             }
         }
-    }
-        </script>
-    </body>
+    </script>
+</body>
 </html>
-
 

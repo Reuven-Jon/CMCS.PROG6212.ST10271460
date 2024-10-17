@@ -76,7 +76,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Contractor Name / Company Name</th>
+                    <th>Lecturer Name / Company Name</th>
                     <th>Claim Period</th>
                     <th>Amount</th>
                     <th>Status</th>
@@ -88,7 +88,7 @@
                     foreach (var claim in Model)
                     {
                         <tr>
-                            <td>@claim.ContractorName</td>
+                            <td>@claim.LecturerName</td> <!-- Changed from ContractorName to LecturerName -->
                             <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                             <td>@claim.Amount.ToString("C")</td>
                             <td>@claim.Status</td>
@@ -113,3 +113,4 @@
     </div>
 </body>
 </html>
+
