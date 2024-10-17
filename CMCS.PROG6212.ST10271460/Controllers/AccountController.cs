@@ -22,52 +22,32 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
         [HttpPost]
         // In your AccountController (Login action):
-        public IActionResult Login(string username, string password)
+        public async Task<IActionResult> Login(string username, string password)
         {
-<<<<<<< HEAD
-            // Validate the form input
-            if (IsValidLogin(model.Username, model.Password))
+            // Authenticate the user
+            var isValidUser = await _userService.ValidateUserCredentials(username, password);
+
+            if (isValidUser)
             {
-                // Store the user session
-                HttpContext.Session.SetString("Username", model.Username);
-                HttpContext.Session.SetString("UserRole", model.Role);
-
-                // Redirect to the appropriate dashboard based on role
-                if (model.Role == "Lecturer")
+                var user = await _userService.GetUserByIdAsync(int.Parse(username)); // Convert username to int
+                if (user != null)
                 {
-                    return RedirectToAction("Dashboard", "Lecturer");
+                    HttpContext.Session.SetString("Username", user.Name); // Changed from user.Username to user.Name
+                    HttpContext.Session.SetString("UserRole", user.Role.ToString());  // Store role in session
+                    if (user.Role == Role.Lecturer)
+                    {
+                        return RedirectToAction("Dashboard", "Lecturer");
+                    }
+                    else if (user.Role == Role.Coordinator)
+                    {
+                        return RedirectToAction("Dashboard", "Manager");
+                    }
                 }
-                else if (model.Role == "Manager" || model.Role == "Coordinator")
-                {
-                    return RedirectToAction("Dashboard", "Manager");
-                }
-            }
-
-            // If validation fails, show an error message
-            ViewBag.ErrorMessage = "Invalid login credentials.";
-            return View(model);  // Return the login view
-=======
-            // Authenticate the user (pseudo-code)
-            var user = _userService.Authenticate(username, password);
-
-            if (user != null)
-            {
-                HttpContext.Session.SetString("Username", user.Name); // Changed from user.Username to user.Name
-                HttpContext.Session.SetString("UserRole", user.Role.ToString());  // Store role in session
-                if (user.Role == Role.Lecturer)
-                {
-                    return RedirectToAction("Dashboard", "Lecturer");
-                }
-                else if (user.Role == Role.Coordinator)
-                {
-                    return RedirectToAction("Dashboard", "Manager");
-                }
-
             }
 
             return View();  // Invalid login attempt
->>>>>>> e67e039fed6ea280849229b3d400860b8a52c9b7
         }
+
 
 
         public IActionResult Logout()
@@ -76,19 +56,6 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             return RedirectToAction("Login");
         }
 
-<<<<<<< HEAD
-        // Helper function for login validation
-        private bool IsValidLogin(string username, string password)
-        {
-            // Check for username and password length and characters as per requirements
-            if (username.Length == 4 && password.Length == 8 &&
-                !password.Any(char.IsWhiteSpace) &&
-                !password.Contains("=") && !password.Contains("+"))
-            {
-                return true;
-            }
-            return false;
-=======
         public IActionResult SwitchRole()
         {
             // Get current role from session
@@ -107,34 +74,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             }
 
             return RedirectToAction("Login", "Account");  // Fallback in case of error
->>>>>>> e67e039fed6ea280849229b3d400860b8a52c9b7
         }
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> e67e039fed6ea280849229b3d400860b8a52c9b7
