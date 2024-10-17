@@ -1,19 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CMCS.PROG6212.ST10271460.Models;
 using Microsoft.AspNetCore.Http;
-using CMCS.PROG6212.ST10271460.Services; // Add this line to include the namespace for IUserService
 
 namespace CMCS.PROG6212.ST10271460.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserService _userService; // Add this line to declare _userService
-
-        public AccountController(IUserService userService) // Add this constructor to inject the dependency
-        {
-            _userService = userService;
-        }
-
         public IActionResult Login(string role)
         {
             ViewBag.Role = role;  // Assign role for display
@@ -21,34 +13,30 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         }
 
         [HttpPost]
-        // In your AccountController (Login action):
-        public async Task<IActionResult> Login(string username, string password)
+        public IActionResult Login(LoginViewModel model)
         {
-            // Authenticate the user
-            var isValidUser = await _userService.ValidateUserCredentials(username, password);
-
-            if (isValidUser)
+            // Validate the form input
+            if (IsValidLogin(model.Username, model.Password))
             {
-                var user = await _userService.GetUserByIdAsync(int.Parse(username)); // Convert username to int
-                if (user != null)
+                // Store the user session
+                HttpContext.Session.SetString("Username", model.Username);
+                HttpContext.Session.SetString("UserRole", model.Role);
+
+                // Redirect to the appropriate dashboard based on role
+                if (model.Role == "Lecturer")
                 {
-                    HttpContext.Session.SetString("Username", user.Name); // Changed from user.Username to user.Name
-                    HttpContext.Session.SetString("UserRole", user.Role.ToString());  // Store role in session
-                    if (user.Role == Role.Lecturer)
-                    {
-                        return RedirectToAction("Dashboard", "Lecturer");
-                    }
-                    else if (user.Role == Role.Coordinator)
-                    {
-                        return RedirectToAction("Dashboard", "Manager");
-                    }
+                    return RedirectToAction("Dashboard", "Lecturer");
+                }
+                else if (model.Role == "Manager" || model.Role == "Coordinator")
+                {
+                    return RedirectToAction("Dashboard", "Manager");
                 }
             }
 
-            return View();  // Invalid login attempt
+            // If validation fails, show an error message
+            ViewBag.ErrorMessage = "Invalid login credentials.";
+            return View(model);  // Return the login view
         }
-
-
 
         public IActionResult Logout()
         {
@@ -56,24 +44,17 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             return RedirectToAction("Login");
         }
 
-        public IActionResult SwitchRole()
+        // Helper function for login validation
+        private bool IsValidLogin(string username, string password)
         {
-            // Get current role from session
-            var currentRole = HttpContext.Session.GetString("UserRole");
-
-            // Switch role between Lecturer and Coordinator/Manager
-            if (currentRole == "Lecturer")
+            // Check for username and password length and characters as per requirements
+            if (username.Length == 4 && password.Length == 8 &&
+                !password.Any(char.IsWhiteSpace) &&
+                !password.Contains("=") && !password.Contains("+"))
             {
-                HttpContext.Session.SetString("UserRole", "Coordinator");  // Switch to Coordinator
-                return RedirectToAction("Dashboard", "Manager");
+                return true;
             }
-            else if (currentRole == "Coordinator")
-            {
-                HttpContext.Session.SetString("UserRole", "Lecturer");  // Switch to Lecturer
-                return RedirectToAction("Dashboard", "Lecturer");
-            }
-
-            return RedirectToAction("Login", "Account");  // Fallback in case of error
+            return false;
         }
     }
 }

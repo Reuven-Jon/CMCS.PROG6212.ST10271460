@@ -30,7 +30,7 @@
                         <td>@claim.LecturerName</td>
                         <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                         <td>@claim.HoursWorked</td>
-                        <td><span class="status @claim.Status.ToLower()">@claim.Status</span></td>
+                        <td><span class="status @(claim.Status?.ToLower() ?? "unknown")">@claim.Status</span></td>
                         <td>
                             <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
                             <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
@@ -46,74 +46,28 @@
                             }
                         </td>
                     </tr>
-<<<<<<< HEAD
-=======
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model)
-                    {
-                        <tr>
-                            <td>@claim.LecturerName</td>
-                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td>@claim.Status</td>
-                            <td>
-                                <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
-                                <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
-                            </td>
-                            <td>@claim.Notes</td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(claim.DocumentPath))
-                                {
-                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
-                                }
-                                else
-                                {
-                                    <span>No document</span>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        </div>
-        <script>
-            function updateClaimStatus(claimId, status) {
-                const managerNote = prompt("Enter a note for this claim:");
-                if (managerNote) {
-                    $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
-                        alert(`Claim ${status}`);
-                        location.reload(); // Refresh the page after status update
-                    });
->>>>>>> e67e039fed6ea280849229b3d400860b8a52c9b7
                 }
             </tbody>
         </table>
     </div>
-
-    <script>
-        function updateClaimStatus(claimId, status) {
-            const managerNote = prompt("Enter a note for this claim:");
-            if (managerNote) {
-                $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
-                    alert(`Claim ${status}`);
-                    location.reload(); // Reload the page after status update
-                });
-            }
-        }
-
-        // Hide the welcome popup after 5 seconds
-        setTimeout(function () {
-            document.getElementById('welcome-popup').style.display = 'none';
-        }, 5000);
-    </script>
 </div>
 
+<script>
+    function updateClaimStatus(claimId, status) {
+        const managerNote = prompt("Enter a note for this claim:");
+        if (managerNote) {
+            $.post(`/Manager/UpdateClaimStatus`, { claimId, status, managerNote }, function () {
+                alert(`Claim ${status}`);
+                location.reload(); // Reload the page after status update
+            });
+        }
+    }
 
-
-
-
+    // Hide the welcome popup after 5 seconds
+    setTimeout(function () {
+        document.getElementById('welcome-popup').style.display = 'none';
+    }, 5000);
+</script>
 
 
 

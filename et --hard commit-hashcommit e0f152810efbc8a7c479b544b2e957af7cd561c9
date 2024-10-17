@@ -1,0 +1,169 @@
+[33mcommit e0f152810efbc8a7c479b544b2e957af7cd561c9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 22:54:54 2024 +0200
+
+    done
+
+[33mcommit 344e06ea40d189c273f76fae5408434a5c9d302f[m
+Merge: 4f0f6ad e67e039
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 22:40:56 2024 +0200
+
+    staged all commits
+
+[33mcommit 4f0f6ad8d1c52dbe58d4203ec3ac153f0f106f96[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 22:40:04 2024 +0200
+
+    Project is now fully functional with all intended feature for lecturer role. I will now improve the Manager roles dashboard.
+
+[33mcommit e67e039fed6ea280849229b3d400860b8a52c9b7[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 17:36:10 2024 +0200
+
+    Added new Services folder with two new classes to handle role selection functionality.
+
+[33mcommit 423274cb5bb7cd23a7aefaefeea00d342637ed17[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 15:41:25 2024 +0200
+
+    implemented new conditions in a few classes to maintain user firendly features as well as new features.
+
+[33mcommit 381ed130456037d4a87eea9daba767ea0a77c87a[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 14:35:54 2024 +0200
+
+    Added submit claims, claim status and the accept/Reject functionality into my code. (For roles dashboards)
+
+[33mcommit 1117b5abfdfe428db5e7011cc60b663b8755f1aa[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 14:16:47 2024 +0200
+
+    Made values nullable (DocumentPath; ContractorName)
+
+[33mcommit 25d28c0cc86cffb4cf932e6c2a2cd400c0948978[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 14:15:06 2024 +0200
+
+    I now integrated an additional notification feature into the existing code. I have carefully merged both the show Popup functionality and the new alert notifcation for accepted and rejected claims.
+
+[33mcommit f72bdd0aaa761f5d77dc65da212ddadfa5291f6a[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 14:01:49 2024 +0200
+
+    Updated my Dashboard views for ach role to incorporate Modern greeting methods and functionality to keep users feeling comfortable.
+
+[33mcommit f8e89ff39146817dccb70eb1eb36689c476500d8[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Thu Oct 17 10:59:17 2024 +0200
+
+    Added the login dashboard functionality for each role.
+
+[33mcommit c2ce266338eba2d6dba4035386c2da8555ed04c7[m
+Merge: 5b6409c 7ae5d77
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Wed Oct 16 14:48:49 2024 +0200
+
+    resolved merge conflicts
+
+[33mcommit 5b6409c190ae6e1d60a5d6bf140061f23a3924b8[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Wed Oct 16 14:43:31 2024 +0200
+
+    I edited my conflicting code with Git and will now commit my stages.
+
+[33mcommit 46be26703e45293ca534fb27fbaa444ce39c332c[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Wed Oct 16 13:51:27 2024 +0200
+
+    I added the following classes to my code: AccountController; LecturerController, ManagerController; LoginViewModel; ClaimStatus; AccessDenied; Login; Dashboard for Manager; Dashboard for Lecturer
+
+[33mcommit 7ae5d77b669e8dd9cd386659423f093b78ac8649[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Wed Oct 9 18:25:37 2024 +0200
+
+    Implemented functionality into my web application to view and submit claims.
+
+[33mcommit 242396ba73b582215e4e20e6195c811e9ab7ff8e[m
+Author: Reuven-Jon Kadalie <130361102+Reuven-Jon@users.noreply.github.com>
+Date:   Tue Sep 10 12:29:19 2024 +0200
+
+    Update README.md
+
+[33mcommit 97dd97fcc3d65ea32dc9b3552d4b5ef606778834[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Tue Sep 10 12:23:03 2024 +0200
+
+    Added my name and student information at the top of each cs class.
+
+[33mcommit 80f1d85f41ea70b78390822204e08bc6fd625dcb[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Tue Sep 10 12:20:47 2024 +0200
+
+    Shortened my code in my ApplicationDbContext class.
+
+[33mcommit 2489f139a5b5cb7ce6794dc0a2583bc8b8ba122e[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:38:04 2024 +0200
+
+    Added a highly intuitive and user friendly Home Page
+
+[33mcommit 9c018401a9adbff90e63b589196057d06d275142[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:29:03 2024 +0200
+
+    Added a Manage html view.
+
+[33mcommit 5af76a6cfe66473948f5a4e41d9ec3bf844ba072[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:28:26 2024 +0200
+
+    Added a Submit html view.
+
+[33mcommit e1399337ec8873cfe101f4bf8c371d658345a2ee[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:26:51 2024 +0200
+
+    Created a Claim folder in my Views folder.
+
+[33mcommit 4920be807fb991ac59cd5bb43362eb8c9773cda6[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:26:07 2024 +0200
+
+    Added a claim controller class for functionality
+
+[33mcommit 3a5802de345b66e967a6c1c2c96ae77ce9a002fc[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:23:28 2024 +0200
+
+    Created a Document class to handle all documents sent through by Users.
+
+[33mcommit eb78a12ec14b3edb0fd73623da4c7174441d6dbc[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:22:15 2024 +0200
+
+    Created a class to handle all approvals of claims (rejected, approved, pending etc)
+
+[33mcommit aa36c984c3b26d97f34f5120da4fa5df83eab514[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:21:07 2024 +0200
+
+    Added a Claim class to handle all user claims.
+
+[33mcommit fc701a32832fde6b3ff727d7887024cad873a4b6[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:19:50 2024 +0200
+
+    Created my User class to store user information.
+
+[33mcommit 05ae4be79d101ff365faf7f43c1b15f48b68c066[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:18:48 2024 +0200
+
+    Add project files.
+
+[33mcommit 4feef2aa395387a35ff96f748c53ca1a8f0ee212[m
+Author: Reuven-Jon Clements Kadalie <ST10271460@vcconnect.edu.za>
+Date:   Mon Sep 9 13:18:42 2024 +0200
+
+    Add .gitattributes, .gitignore, and README.md.
