@@ -1,10 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CMCS.PROG6212.ST10271460.Controllers;
-using CMCS.PROG6212.ST10271460.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Net.Http;
+using CMCS.PROG6212.ST10271460.Controllers; // Correctly reference your AccountController namespace
+using CMCS.PROG6212.ST10271460.Models; // Reference the model namespace
+using Microsoft.AspNetCore.Http;
 
 namespace CMCS.Tests
 {
@@ -37,8 +36,9 @@ namespace CMCS.Tests
             // Arrange
             var model = new LoginViewModel
             {
-                Username = "abcd", // Valid username (4 chars)
-                Password = "password" // Valid password (8 chars)
+                Username = "abcd",  // Valid username
+                Password = "password",  // Valid password
+                Role = "Lecturer"  // Role is set to Lecturer
             };
 
             // Act
@@ -56,8 +56,8 @@ namespace CMCS.Tests
             // Arrange
             var model = new LoginViewModel
             {
-                Username = "abc", // Invalid username (less than 4 chars)
-                Password = "pass" // Invalid password (less than 8 chars)
+                Username = "abc",  // Invalid username (less than 4 chars)
+                Password = "pass"  // Invalid password (less than 8 chars)
             };
 
             // Act
@@ -65,7 +65,7 @@ namespace CMCS.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.ViewData["ErrorMessage"]);
+            Assert.IsNotNull(result?.ViewData["ErrorMessage"]);
         }
 
         [TestMethod]
@@ -76,9 +76,11 @@ namespace CMCS.Tests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("Login", result.ActionName);
+            Assert.AreEqual("Login", result?.ActionName);
         }
     }
 }
+
+
 
 
