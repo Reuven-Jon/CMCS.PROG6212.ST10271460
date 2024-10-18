@@ -56,6 +56,13 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             }
             return false;
         }
+
+        public IActionResult SubmitClaim()
+        {
+            var model = new ClaimViewModel();
+            return View(model);
+        }
+
     }
 }
 
