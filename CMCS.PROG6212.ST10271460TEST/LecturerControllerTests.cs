@@ -14,8 +14,8 @@ namespace CMCS.Tests
     [TestClass]
     public class LecturerControllerTests
     {
-        private LecturerController _controller;
-        private Mock<HttpContext> _mockHttpContext;
+        private LecturerController? _controller;
+        private Mock<HttpContext>? _mockHttpContext;
 
         [TestInitialize]
         public void Setup()
@@ -53,10 +53,12 @@ namespace CMCS.Tests
             fileMock.Setup(f => f.Length).Returns(100);
 
             // Act
-            var result = await _controller.SubmitClaim(model, fileMock.Object) as RedirectToActionResult;
+            var result = await _controller!.SubmitClaim(model, fileMock.Object) as RedirectToActionResult;
 
-            // Assert
-            Assert.IsNotNull(result);
+
+            // Assert that result is not null before proceeding
+            Assert.IsNotNull(result, "The result should not be null.");
+            Assert.AreEqual("ExpectedController", result.ControllerName);
             Assert.AreEqual("YourClaims", result.ActionName);
         }
     }

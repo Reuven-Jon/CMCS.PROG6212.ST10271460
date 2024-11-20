@@ -1,68 +1,54 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CMCS.PROG6212.ST10271460.Models;
 using Microsoft.AspNetCore.Http;
+using CMCS.PROG6212.ST10271460.Models;
 
 namespace CMCS.PROG6212.ST10271460.Controllers
 {
     public class AccountController : Controller
     {
-        public IActionResult Login(string role)
+        // GET: Login page
+        [HttpGet]
+        public IActionResult Login()
         {
-            ViewBag.Role = role;  // Assign role for display
             return View();
         }
 
+        // POST: Handle login form submission
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            // Validate the form input
-            if (IsValidLogin(model.Username, model.Password))
+            if (ModelState.IsValid && model.Username == "user" && model.Password == "password")
             {
-                // Store the user session
+                // Simulated role validation
                 HttpContext.Session.SetString("Username", model.Username);
-                HttpContext.Session.SetString("UserRole", model.Role);
+                HttpContext.Session.SetString("Role", model.Role);
 
-                // Redirect to the appropriate dashboard based on role
                 if (model.Role == "Lecturer")
                 {
                     return RedirectToAction("Dashboard", "Lecturer");
                 }
-                else if (model.Role == "Manager" || model.Role == "Coordinator")
+                else if (model.Role == "Manager")
                 {
                     return RedirectToAction("Dashboard", "Manager");
                 }
+                else
+                {
+                    ViewBag.ErrorMessage = "Unsupported role.";
+                    return View(model);
+                }
             }
 
-            // If validation fails, show an error message
             ViewBag.ErrorMessage = "Invalid login credentials.";
-            return View(model);  // Return the login view
+            return View(model);
         }
 
+        // Logout action
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
-
-        // Helper function for login validation
-        private bool IsValidLogin(string username, string password)
-        {
-            // Check for username and password length and characters as per requirements
-            if (username.Length == 4 && password.Length == 8 &&
-                !password.Any(char.IsWhiteSpace) &&
-                !password.Contains("=") && !password.Contains("+"))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public IActionResult SubmitClaim()
-        {
-            var model = new ClaimViewModel();
-            return View(model);
-        }
-
     }
 }
+
 

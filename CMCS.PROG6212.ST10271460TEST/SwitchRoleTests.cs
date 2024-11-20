@@ -8,7 +8,8 @@ namespace CMCS.PROG6212.ST10271460TEST
     [TestClass]
     public class SwitchRoleTests
     {
-        private AccountController _controller;
+        private AccountController? _controller;
+
 
         [TestInitialize]
         public void Setup()
@@ -21,12 +22,13 @@ namespace CMCS.PROG6212.ST10271460TEST
         public void SwitchRole_RedirectsToLoginPage()
         {
             // Act
-            var result = _controller.SwitchRole() as RedirectToActionResult;
+            var result = _controller?.SwitchRole() as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("Login", result.ActionName);
+            Assert.AreEqual("Login", result?.ActionName);
         }
+
     }
 }
 

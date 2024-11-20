@@ -314,27 +314,29 @@
             document.getElementById('welcome-popup').style.display = 'none';
         }, 8000);
 
-        // Trigger popup based on claim statuses
+        // Array to hold claim statuses
         var claimStatuses = [];
 
-    @foreach (var claim in Model)
-    {
-        <text>
-                    if ('@claim.Status' === '@CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()') {
-                        claimStatuses.push('accepted')
-                        } else if ('@claim.Status' === '@CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()') {
-                        claimStatuses.push('rejected')
-                        }
-        </text>
-    }
+        // Populate claimStatuses array with Razor-generated JSON data
+        var claims = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(c => new { c.Status })));
 
-            if (claimStatuses.includes("accepted")) {
+        // Check claim statuses and trigger popups accordingly
+        claims.forEach(function (claim) {
+            if (claim.Status === '@CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()') {
+                claimStatuses.push('accepted');
+            } else if (claim.Status === '@CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()') {
+                claimStatuses.push('rejected');
+            }
+        });
+
+        if (claimStatuses.includes("accepted")) {
             showPopup("accepted");
         } else if (claimStatuses.includes("rejected")) {
             showPopup("rejected");
         }
     };
 </script>
+
 
 
 <style>
