@@ -44,7 +44,7 @@ namespace CMCS.Tests
             // Act
             var result = _controller?.Login(model) as RedirectToActionResult;
 
-            // Assert
+            // Assert 
             Assert.IsNotNull(result);
             Assert.AreEqual("Dashboard", result.ActionName);
             Assert.AreEqual("Lecturer", result.ControllerName);

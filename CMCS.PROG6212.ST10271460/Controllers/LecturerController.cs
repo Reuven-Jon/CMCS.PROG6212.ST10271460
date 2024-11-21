@@ -1,9 +1,10 @@
 ﻿using CMCS.PROG6212.ST10271460.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class LecturerController : Controller
 {
@@ -16,43 +17,58 @@ public class LecturerController : Controller
         _hostingEnvironment = hostingEnvironment;
     }
 
-    // Submit a claim view
+    [HttpGet]
     public IActionResult SubmitClaim()
     {
-        return View();  // Show the form for submitting claims
+        if (HttpContext.Session.GetString("UserRole") != "Lecturer")
+        {
+            return RedirectToAction("AccessDenied", "Account");
+        }
+        return View();
     }
 
-    // Submit the claim and save it to the database
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile Document)
     {
+        if (HttpContext.Session.GetString("UserRole") != "Lecturer")
+        {
+            return RedirectToAction("AccessDenied", "Account");
+        }
+
         if (ModelState.IsValid)
         {
-            var lecturerId = User.Identity?.Name; // Get lecturer's identity
-            if (lecturerId == null)
-            {
-                ModelState.AddModelError(string.Empty, "User is not logged in.");
-                return View(model);
-            }
-
             var claim = new Claim
             {
-                LecturerId = lecturerId,
-                LecturerName = HttpContext.Session.GetString("Username") ?? string.Empty,
+                LecturerName = HttpContext.Session.GetString("Username"),
                 ClaimPeriod = model.ClaimPeriod,
                 HoursWorked = model.HoursWorked,
                 HourlyRate = model.HourlyRate,
                 Amount = model.HoursWorked * model.HourlyRate,
                 DateSubmitted = DateTime.Now,
-                Status = "Pending"
+                Status = ClaimStatus.Pending.ToString()
             };
 
-            // Handle file upload
+            // Validate hours (no weekends or non-working hours)
+            if (model.ClaimPeriod.DayOfWeek == DayOfWeek.Saturday || model.ClaimPeriod.DayOfWeek == DayOfWeek.Sunday)
+            {
+                ModelState.AddModelError("", "Cannot log hours on weekends.");
+                return View(model);
+            }
+
             if (Document != null && Document.Length > 0)
             {
-                var documentPath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Document.FileName);
-                using (var stream = new FileStream(documentPath, FileMode.Create))
+                var allowedExtensions = new[] { ".pdf", ".docx", ".xlsx" };
+                var fileExtension = Path.GetExtension(Document.FileName);
+
+                if (!allowedExtensions.Contains(fileExtension.ToLower()))
+                {
+                    ModelState.AddModelError("", "Invalid file type. Only PDF, DOCX, and XLSX are allowed.");
+                    return View(model);
+                }
+
+                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Document.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await Document.CopyToAsync(stream);
                 }
@@ -61,39 +77,22 @@ public class LecturerController : Controller
 
             _context.Claims.Add(claim);
             await _context.SaveChangesAsync();
-
-            return RedirectToAction("YourClaims"); // Redirect to "Your Claims" after successful submission
+            return RedirectToAction("Dashboard");
         }
 
-        return View(model); // Return to the form in case of validation failure
-    }
-
-    // Display all claims submitted by the lecturer
-    public IActionResult YourClaims()
-    {
-        var username = HttpContext.Session.GetString("Username");
-        if (string.IsNullOrEmpty(username))
-        {
-            return RedirectToAction("Login", "Account");
-        }
-
-        // Get the lecturer's claims
-        var claims = _context.Claims.Where(c => c.LecturerName == username).ToList();
-
-        return View(claims);  // Return the list of claims
+        return View(model);
     }
 
     public IActionResult Dashboard()
     {
-        var username = HttpContext.Session.GetString("Username");
-        if (string.IsNullOrEmpty(username))
+        if (HttpContext.Session.GetString("UserRole") != "Lecturer")
         {
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("AccessDenied", "Account");
         }
 
-        // Fetch the lecturer's claims
+        var username = HttpContext.Session.GetString("Username");
         var claims = _context.Claims.Where(c => c.LecturerName == username).ToList();
-
-        return View(claims);  // Return the list of claims to the Dashboard view
+        return View(claims);
     }
 }
+
