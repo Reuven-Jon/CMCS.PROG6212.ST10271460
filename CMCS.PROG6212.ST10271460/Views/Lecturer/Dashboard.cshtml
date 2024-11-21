@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecturer Dashboard</title>
     <style>
+        /* Styling remains the same */
         body {
             background-color: #f4f7f6;
             font-family: Arial, sans-serif;
@@ -90,74 +91,9 @@
             .status.rejected {
                 color: red;
             }
-
-        .hamburger {
-            cursor: pointer;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-            .hamburger .bar {
-                width: 30px;
-                height: 3px;
-                background-color: #333;
-                margin: 6px auto;
-                transition: all 0.3s ease;
-            }
-
-            .hamburger.active .bar:nth-child(1) {
-                transform: rotate(-45deg) translate(-5px, 5px);
-            }
-
-            .hamburger.active .bar:nth-child(2) {
-                opacity: 0;
-            }
-
-            .hamburger.active .bar:nth-child(3) {
-                transform: rotate(45deg) translate(-5px, -5px);
-            }
-
-        .nav-menu {
-            display: none;
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-            .nav-menu.active {
-                display: block;
-            }
-
-            .nav-menu a {
-                display: block;
-                padding: 10px;
-                background-color: #4CAF50;
-                color: white;
-                text-decoration: none;
-                margin-bottom: 5px;
-                text-align: center;
-                border-radius: 5px;
-            }
-
-                .nav-menu a:hover {
-                    background-color: #45a049;
-                }
     </style>
 </head>
 <body>
-    <!-- Hamburger Menu -->
-    <div class="hamburger" id="hamburger">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </div>
-
-    <div class="nav-menu" id="nav-menu">
-        <a href="/Lecturer/SubmitClaim">Submit Claim</a>
-        <a href="/Lecturer/Dashboard">Your Claims</a>
-        <a href="/Account/Logout">Logout</a>
-    </div>
-
     <div class="container">
         <h2>Lecturer Dashboard</h2>
 
@@ -165,19 +101,19 @@
         <div class="summary">
             <div class="summary-card">
                 <h4>Total Claims</h4>
-                <p>@Model.Count()</p>
+                <p>@Model?.Count() ?? 0</p>
             </div>
             <div class="summary-card">
                 <h4>Pending Claims</h4>
-                <p>@Model.Count(c => c.Status == "Pending")</p>
+                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending) ?? 0</p>
             </div>
             <div class="summary-card">
                 <h4>Approved Claims</h4>
-                <p>@Model.Count(c => c.Status == "Approved")</p>
+                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved) ?? 0</p>
             </div>
             <div class="summary-card">
                 <h4>Rejected Claims</h4>
-                <p>@Model.Count(c => c.Status == "Rejected")</p>
+                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected) ?? 0</p>
             </div>
         </div>
 
@@ -195,46 +131,42 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var claim in Model)
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.HoursWorked</td>
+                            <td>@claim.HourlyRate.ToString("C")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                            <td>
+                                <span class="status @claim.Status.ToString().ToLowerInvariant()">@claim.Status</span>
+                            </td>
+                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(claim?.DocumentPath))
+                                {
+                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
+                                }
+                                else
+                                {
+                                    <span>No document</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                        <td>@claim.HoursWorked</td>
-                        <td>@claim.HourlyRate.ToString("C")</td>
-                        <td>@claim.Amount.ToString("C")</td>
-                        <td><span class="status @claim.Status.ToLower()">@claim.Status</span></td>
-                        <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(claim?.DocumentPath))
-                            {
-                                <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
-                            }
-                            else
-                            {
-                                <span>No document</span>
-                            }
-                        </td>
+                        <td colspan="7">No claims available.</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-
-    <script>
-        // Toggle Hamburger Menu
-        document.getElementById('hamburger').addEventListener('click', function () {
-            const navMenu = document.getElementById('nav-menu');
-            this.classList.toggle('active');
-                    navMenu.classList.toggle('active');
-        });
-    </script>
 </body>
 </html>
-
-
-
-
-
-
 
 

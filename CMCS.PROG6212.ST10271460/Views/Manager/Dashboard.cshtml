@@ -5,129 +5,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coordinator/Manager Dashboard</title>
+    <title>Contract Monthly Claim System - Homepage</title>
     <style>
         body {
-            background-color: #f4f7f6;
             font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
             margin: 0;
             padding: 0;
         }
 
         .container {
+            width: 80%;
+            margin: 50px auto;
             padding: 20px;
             background-color: white;
-            margin: 40px auto;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 1200px;
         }
 
-        h2 {
-            color: #ff6600;
+        h2, h3 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        p {
+            text-align: center;
+            color: #555;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin: 20px 0;
         }
 
         table, th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
         }
 
         th {
             background-color: #f4f4f4;
+            color: #333;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
         }
 
         .btn {
-            padding: 8px 12px;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        .btn-success {
-            background-color: #28a745;
+        .btn-primary {
+            background-color: #4CAF50;
             color: white;
         }
 
-            .btn-success:hover {
-                background-color: #218838;
+            .btn-primary:hover {
+                background-color: #45a049;
             }
 
-        .btn-danger {
-            background-color: #dc3545;
+        .btn-secondary {
+            background-color: #2196F3;
             color: white;
         }
 
-            .btn-danger:hover {
-                background-color: #c82333;
+            .btn-secondary:hover {
+                background-color: #0b7dda;
             }
-
-        .btn-info {
-            background-color: #17a2b8;
-            color: white;
-        }
-
-            .btn-info:hover {
-                background-color: #138496;
-            }
-
-        .hamburger {
-            cursor: pointer;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-            .hamburger .bar {
-                width: 30px;
-                height: 3px;
-                background-color: #333;
-                margin: 6px auto;
-                transition: all 0.3s ease;
-            }
-
-            .hamburger.active .bar:nth-child(1) {
-                transform: rotate(-45deg) translate(-5px, 5px);
-            }
-
-            .hamburger.active .bar:nth-child(2) {
-                opacity: 0;
-            }
-
-            .hamburger.active .bar:nth-child(3) {
-                transform: rotate(45deg) translate(-5px, -5px);
-            }
-
-        .nav-menu {
-            display: none;
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-            .nav-menu.active {
-                display: block;
-            }
-
-            .nav-menu a {
-                display: block;
-                padding: 10px;
-                background-color: #ff6600;
-                color: white;
-                text-decoration: none;
-                margin-bottom: 5px;
-                text-align: center;
-            }
-
-                .nav-menu a:hover {
-                    background-color: #ff8c1a;
-                }
 
         .status {
             font-weight: bold;
@@ -148,103 +108,55 @@
     </style>
 </head>
 <body>
-    <div class="hamburger" id="hamburger">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </div>
-
-    <div class="nav-menu" id="nav-menu">
-        <a href="/Manager/Dashboard">Manage Claims</a>
-        <a href="/Account/Logout">Logout</a>
-    </div>
-
     <div class="container">
-        <h2>Coordinator/Manager Dashboard</h2>
-
-        <!-- Welcome message pop-up -->
-        <div id="welcome-popup" style="background-color: #f4f7f6; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px;">
-            <h4>Welcome to the Coordinator/Manager Dashboard!</h4>
-            <p>Here you can manage and approve claims.</p>
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2>Welcome to the Contract Monthly Claim System</h2>
+            <p>Manage and track your monthly claims seamlessly.</p>
         </div>
 
-        <!-- Claims Table -->
-        <div>
-            <h3>Manage Claims</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Lecturer Name</th>
-                        <th>Claim Period</th>
-                        <th>Hours Worked</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                        <th>Document</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model)
+        <!-- Monthly Claims Table -->
+        <h3>Monthly Claims Overview</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Lecturer Name / Company Name</th>
+                    <th>Claim Period</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var claim in Model)
                     {
                         <tr>
                             <td>@claim.LecturerName</td>
                             <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td><span class="status @claim.Status.ToLowerInvariant()">@claim.Status</span></td>
-                            <td>
-                                <button class="btn btn-success" onclick="updateClaimStatus('@claim.Id', 'Approved')">Approve</button>
-                                <button class="btn btn-danger" onclick="updateClaimStatus('@claim.Id', 'Rejected')">Reject</button>
-                            </td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(claim.DocumentPath))
-                                {
-                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
-                                }
-                                else
-                                {
-                                    <span>No document</span>
-                                }
-                            </td>
+                            <td>@claim.Amount.ToString("C")</td>
+                            <td class="status @claim.Status.ToString().ToLowerInvariant()">@claim.Status</td>
                         </tr>
                     }
-                </tbody>
-            </table>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" style="text-align: center;">No claims available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Button Group -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="location.href='@Url.Action("Submit", "Claim")'">Submit Claim</button>
+            <button class="btn btn-secondary" onclick="location.href='@Url.Action("Manage", "Claim")'">Manage Claims</button>
         </div>
     </div>
-
-    <script>
-        // Hamburger menu functionality
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        // Hide the welcome popup after 5 seconds
-        setTimeout(function () {
-            document.getElementById('welcome-popup').style.display = 'none';
-        }, 5000);
-
-        // Approve or Reject claim functionality
-        function updateClaimStatus(claimId, status) {
-            const managerNote = prompt(`Enter a note for this claim (${status}):`);
-            if (managerNote) {
-                fetch(`/Manager/UpdateClaimStatus`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ claimId, status, managerNote })
-                })
-                .then(() => {
-                        alert(`Claim has been ${status.toLowerCase()} successfully!`);
-                            location.reload();
-                        })
-                        .catch(err => alert('Failed to update claim: ' + err.message));
-                    }
-                }
-    </script>
 </body>
 </html>
+
 
 
 

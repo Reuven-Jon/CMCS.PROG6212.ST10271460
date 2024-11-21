@@ -40,7 +40,7 @@ public class LecturerController : Controller
         {
             var claim = new Claim
             {
-                LecturerName = HttpContext.Session.GetString("Username"),
+                LecturerName = HttpContext.Session.GetString("Username") ?? string.Empty,
                 ClaimPeriod = model.ClaimPeriod,
                 HoursWorked = model.HoursWorked,
                 HourlyRate = model.HourlyRate,
