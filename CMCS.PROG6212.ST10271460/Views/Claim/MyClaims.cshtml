@@ -82,7 +82,7 @@
         <!-- Pending Claims Section -->
         <div class="claim-category">
             <h3>Pending Claims</h3>
-            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending.ToString()))
+            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending))
             {
                 <table>
                     <thead>
@@ -95,7 +95,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending.ToString()))
+                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending))
                         {
                             <tr>
                                 <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
@@ -117,7 +117,7 @@
         <!-- Approved Claims Section -->
         <div class="claim-category">
             <h3>Approved Claims</h3>
-            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()))
+            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved))
             {
                 <table>
                     <thead>
@@ -130,7 +130,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()))
+                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved))
                         {
                             <tr>
                                 <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
@@ -152,7 +152,7 @@
         <!-- Rejected Claims Section -->
         <div class="claim-category">
             <h3>Rejected Claims</h3>
-            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()))
+            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected))
             {
                 <table>
                     <thead>
@@ -165,7 +165,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()))
+                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected))
                         {
                             <tr>
                                 <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>

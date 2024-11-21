@@ -125,10 +125,10 @@
                         <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                         <td>@claim.Amount.ToString("C")</td>
                         <td>
-                            <span class="status @claim.Status.ToLower()">@claim.Status</span>
+                            <span class="status @claim.Status.ToString().ToLower()">@claim.Status</span>
                         </td>
                         <td>
-                            @if (claim.Status == "Pending")
+                            @if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)
                             {
                                 <a href="/Manager/ApproveClaim/@claim.Id" class="btn approve">Approve</a>
                                 <a href="/Manager/RejectClaim/@claim.Id" class="btn reject">Reject</a>
@@ -161,5 +161,3 @@
     </script>
 </body>
 </html>
-
-
