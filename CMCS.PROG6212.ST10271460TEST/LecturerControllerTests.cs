@@ -14,8 +14,9 @@ namespace CMCS.Tests
     [TestClass]
     public class LecturerControllerTests
     {
-        private LecturerController _controller;
-        private Mock<HttpContext> _mockHttpContext;
+        private LecturerController? _controller;
+        private Mock<HttpContext>? _mockHttpContext;
+
 
         [TestInitialize]
         public void Setup()
