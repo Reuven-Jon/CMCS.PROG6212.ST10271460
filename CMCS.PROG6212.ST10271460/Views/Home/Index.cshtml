@@ -135,7 +135,7 @@
                             <td>@claim.LecturerName</td>
                             <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                             <td>@claim.Amount.ToString("C")</td>
-                            <td class="status @claim.Status.ToLower()">@claim.Status</td>
+                            <td class="status @(claim.Status.ToString().ToLowerInvariant())">@claim.Status</td>
                         </tr>
                     }
                 }
