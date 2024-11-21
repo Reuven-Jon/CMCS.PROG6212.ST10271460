@@ -1,5 +1,3 @@
-using CMCS.PROG6212.ST10271460.Models;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMCS.PROG6212.ST10271460.Controllers
@@ -10,8 +8,13 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         {
             return View();
         }
-    }
 
+        public IActionResult AccessDenied()
+        {
+            return View("AccessDenied");
+        }
+    }
 }
+
 
 
