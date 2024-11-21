@@ -3,8 +3,10 @@
     public enum ClaimStatus
     {
         Pending,    // Default state when the claim is first submitted
-        Approved,   // When the claim has been approved by a manager
-        Rejected    // When the claim has been rejected
+        Approved,   // When the claim has been approved by all levels
+        Rejected,   // When the claim has been rejected
+        Submitted   // Claim submitted but not yet approved
     }
 }
+
 

@@ -1,15 +1,41 @@
-﻿/* Fixed keyframes */
+﻿/* Keyframes for smooth bounce animation */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
         transform: translateY(0);
     }
 
     40% {
-        transform: translateY(-30px);
+        transform: translateY(-25px);
     }
 
     60% {
         transform: translateY(-15px);
+    }
+}
+
+/* Keyframes for fade-in effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Keyframes for fade-out effect */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.8);
     }
 }
 
@@ -21,51 +47,83 @@
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .popup-message {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
     font-size: 24px;
     color: white;
     text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    animation: bounce 2s infinite;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
     .popup-message.approved {
-        background-color: green;
-        animation: bounce 2s infinite;
+        background-color: #28a745;
     }
 
     .popup-message.rejected {
-        background-color: red;
-        animation: bounce 2s infinite;
+        background-color: #dc3545;
     }
 
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
+    /* Glow effect on hover */
+    .popup-message:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
     }
 
-    40% {
-        transform: translateY(-30px);
+/* Button hover effects */
+button {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    button:hover {
+        background-color: #0056b3;
+        transform: scale(1.1);
     }
 
-    60% {
-        transform: translateY(-15px);
+/* Fade-out effect for hiding popups */
+.popup-container.fade-out {
+    animation: fadeOut 0.5s ease-in-out;
+}
+
+/* Smooth transition for all elements */
+* {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Adding a subtle pulsate effect */
+@keyframes pulsate {
+    0% {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 }
 
-.popup-message.approved {
-    background-color: green;
-    animation: bounce 2s infinite;
+.popup-message {
+    animation: bounce 2s infinite, pulsate 3s infinite;
 }
 
-.popup-message.rejected {
-    background-color: red;
-    animation: bounce 2s infinite;
+/* Hover effects for buttons or clickable areas */
+button, .clickable {
+    cursor: pointer;
 }
+
+    button.clickable:hover {
+        background-color: #17a2b8;
+        transform: scale(1.05);
+    }

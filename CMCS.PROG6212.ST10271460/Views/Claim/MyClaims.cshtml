@@ -7,27 +7,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Claims</title>
     <style>
-        .claim-category {
-            margin-top: 20px;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
         }
 
-            .claim-category h3 {
-                background-color: #f2f2f2;
-                padding: 10px;
-            }
+        .container {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .claim-category {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
         }
 
         table, th, td {
             border: 1px solid #ddd;
             padding: 8px;
+            text-align: center;
         }
 
         th {
             background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        td.status.pending {
+            color: orange;
+            font-weight: bold;
+        }
+
+        td.status.approved {
+            color: green;
+            font-weight: bold;
+        }
+
+        td.status.rejected {
+            color: red;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -38,85 +82,106 @@
         <!-- Pending Claims Section -->
         <div class="claim-category">
             <h3>Pending Claims</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Claim Period</th>
-                        <th>Hours Worked</th>
-                        <th>Hourly Rate</th>
-                        <th>Submitted Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending.ToString()))
-                    {
+            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending.ToString()))
+            {
+                <table>
+                    <thead>
                         <tr>
-                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td>@claim.HourlyRate.ToString("C")</td>
-                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                            <td>@claim.Amount.ToString("C")</td>
+                            <th>Claim Period</th>
+                            <th>Hours Worked</th>
+                            <th>Hourly Rate</th>
+                            <th>Submitted Date</th>
+                            <th>Amount</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending.ToString()))
+                        {
+                            <tr>
+                                <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                                <td>@claim.HoursWorked</td>
+                                <td>@claim.HourlyRate.ToString("C")</td>
+                                <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                                <td>@claim.Amount.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="empty-message">No pending claims found.</p>
+            }
         </div>
 
         <!-- Approved Claims Section -->
         <div class="claim-category">
             <h3>Approved Claims</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Claim Period</th>
-                        <th>Hours Worked</th>
-                        <th>Hourly Rate</th>
-                        <th>Submitted Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()))
-                    {
+            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()))
+            {
+                <table>
+                    <thead>
                         <tr>
-                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td>@claim.HourlyRate.ToString("C")</td>
-                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                            <td>@claim.Amount.ToString("C")</td>
+                            <th>Claim Period</th>
+                            <th>Hours Worked</th>
+                            <th>Hourly Rate</th>
+                            <th>Submitted Date</th>
+                            <th>Amount</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved.ToString()))
+                        {
+                            <tr>
+                                <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                                <td>@claim.HoursWorked</td>
+                                <td>@claim.HourlyRate.ToString("C")</td>
+                                <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                                <td>@claim.Amount.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="empty-message">No approved claims found.</p>
+            }
         </div>
 
         <!-- Rejected Claims Section -->
         <div class="claim-category">
             <h3>Rejected Claims</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Claim Period</th>
-                        <th>Hours Worked</th>
-                        <th>Hourly Rate</th>
-                        <th>Submitted Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()))
-                    {
+            @if (Model.Any(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()))
+            {
+                <table>
+                    <thead>
                         <tr>
-                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                            <td>@claim.HoursWorked</td>
-                            <td>@claim.HourlyRate.ToString("C")</td>
-                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
-                            <td>@claim.Amount.ToString("C")</td>
+                            <th>Claim Period</th>
+                            <th>Hours Worked</th>
+                            <th>Hourly Rate</th>
+                            <th>Submitted Date</th>
+                            <th>Amount</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var claim in Model.Where(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected.ToString()))
+                        {
+                            <tr>
+                                <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                                <td>@claim.HoursWorked</td>
+                                <td>@claim.HourlyRate.ToString("C")</td>
+                                <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                                <td>@claim.Amount.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="empty-message">No rejected claims found.</p>
+            }
         </div>
     </div>
 </body>

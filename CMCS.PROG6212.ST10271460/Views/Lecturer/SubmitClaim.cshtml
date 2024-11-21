@@ -1,6 +1,5 @@
 ﻿@model CMCS.PROG6212.ST10271460.Models.ClaimViewModel
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,12 +10,15 @@
         body {
             background-color: #f4f7f6;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
+            max-width: 600px;
+            margin: 40px auto;
             padding: 20px;
             background-color: white;
-            margin-top: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -24,38 +26,60 @@
         h2 {
             color: #4CAF50;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
+            font-weight: bold;
             margin-bottom: 5px;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 16px;
         }
+
+            input:focus, textarea:focus, select:focus {
+                outline: none;
+                border-color: #4CAF50;
+                box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            }
 
         .btn {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
 
             .btn:hover {
                 background-color: #45a049;
+                transition: background-color 0.3s ease;
             }
+
+        .tooltip {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -65,61 +89,30 @@
         <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="ClaimPeriod">Claim Period:</label>
-                <input type="month" id="ClaimPeriod" name="ClaimPeriod" required class="form-control" />
+                <input type="month" id="ClaimPeriod" name="ClaimPeriod" value="@Model?.ClaimPeriod.ToString("yyyy-MM")" required class="form-control" />
+                <span class="tooltip">Select the month and year for the claim.</span>
             </div>
 
             <div class="form-group">
                 <label for="HoursWorked">Hours Worked:</label>
-                <input type="number" id="HoursWorked" name="HoursWorked" required class="form-control" />
+                <input type="number" id="HoursWorked" name="HoursWorked" value="@Model?.HoursWorked" required class="form-control" min="1" max="744" />
+                <span class="tooltip">Enter the total hours worked (1-744).</span>
             </div>
 
             <div class="form-group">
                 <label for="HourlyRate">Hourly Rate:</label>
-                <input type="number" step="0.01" id="HourlyRate" name="HourlyRate" required class="form-control" />
+                <input type="number" step="0.01" id="HourlyRate" name="HourlyRate" value="@Model?.HourlyRate" required class="form-control" min="0" />
+                <span class="tooltip">Enter your hourly rate in your local currency.</span>
             </div>
 
             <div class="form-group">
-                <label for="Document">Upload Supporting Document (PDF):</label>
-                <input type="file" id="Document" name="Document" accept=".pdf" class="form-control" />
+                <label for="Document">Upload Supporting Document:</label>
+                <input type="file" id="Document" name="Document" accept=".pdf,.doc,.docx,.png,.jpg" class="form-control" />
+                <span class="tooltip">Accepted formats: PDF, DOC, DOCX, PNG, JPG.</span>
             </div>
 
-            <button type="submit" class="btn btn-success">Submit Claim</button>
+            <button type="submit" class="btn">Submit Claim</button>
         </form>
     </div>
 </body>
 </html>
-
-<h2>Submit a New Claim</h2>
-
-@if (Model != null)
-{
-    <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="ClaimPeriod">Claim Period</label>
-            <input type="month" id="ClaimPeriod" name="ClaimPeriod" required class="form-control" value="@Model.ClaimPeriod" />
-        </div>
-
-        <div class="form-group">
-            <label for="HoursWorked">Hours Worked</label>
-            <input type="number" id="HoursWorked" name="HoursWorked" required class="form-control" value="@Model.HoursWorked" />
-        </div>
-
-        <div class="form-group">
-            <label for="HourlyRate">Hourly Rate</label>
-            <input type="number" step="0.01" id="HourlyRate" name="HourlyRate" required class="form-control" value="@Model.HourlyRate" />
-        </div>
-
-        <div class="form-group">
-            <label for="Document">Upload Supporting Document (PDF)</label>
-            <input type="file" id="Document" name="Document" accept=".pdf" class="form-control" />
-        </div>
-
-        <button type="submit" class="btn btn-success">Submit Claim</button>
-    </form>
-}
-else
-{
-    <p>Model is not available.</p>
-}
-
-

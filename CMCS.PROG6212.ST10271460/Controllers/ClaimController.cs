@@ -35,7 +35,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             if (ModelState.IsValid)
             {
                 claim.DateSubmitted = DateTime.Now;
-                claim.Status = ClaimStatus.Pending.ToString();
+                claim.Status = (ClaimStatus)Enum.Parse(typeof(ClaimStatus), "Pending");
 
                 _context.Add(claim);
                 await _context.SaveChangesAsync();
@@ -63,9 +63,9 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            var pendingClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Pending.ToString());
-            var approvedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Approved.ToString());
-            var rejectedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Rejected.ToString());
+            var pendingClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Pending);
+            var approvedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Approved);
+            var rejectedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Rejected);
 
             ViewBag.PendingClaims = pendingClaims;
             ViewBag.ApprovedClaims = approvedClaims;
@@ -73,6 +73,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
             return View();
         }
+
     }
 }
 

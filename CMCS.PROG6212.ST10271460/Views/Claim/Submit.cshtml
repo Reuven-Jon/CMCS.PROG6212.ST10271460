@@ -1,36 +1,140 @@
 ﻿@model CMCS.PROG6212.ST10271460.Models.Claim
 
-<h2>Submit a New Claim</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a New Claim</title>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
+        }
 
-<form asp-action="SubmitClaim" enctype="multipart/form-data" method="post">
-    <div class="form-group">
-        <label for="ClaimPeriod">Claim Period</label>
-        <input asp-for="ClaimPeriod" class="form-control" type="date" required />
+        .container {
+            padding: 20px;
+            background-color: white;
+            margin: 20px auto;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input:focus, select:focus, button:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .tooltip {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .readonly-input {
+            background-color: #f9f9f9;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Submit a New Claim</h2>
+        <form asp-action="SubmitClaim" enctype="multipart/form-data" method="post">
+            <!-- Claim Period -->
+            <div class="form-group">
+                <label for="ClaimPeriod">Claim Period</label>
+                <input asp-for="ClaimPeriod" class="form-control" type="date" required />
+                <span class="tooltip">Select the month and year for the claim.</span>
+            </div>
+
+            <!-- Hours Worked -->
+            <div class="form-group">
+                <label for="HoursWorked">Hours Worked</label>
+                <input asp-for="HoursWorked" class="form-control" type="number" min="1" max="200" required />
+                <span class="tooltip">Enter the total hours worked (e.g., 40).</span>
+            </div>
+
+            <!-- Hourly Rate -->
+            <div class="form-group">
+                <label for="HourlyRate">Hourly Rate</label>
+                <input asp-for="HourlyRate" class="form-control" type="number" step="0.01" required />
+                <span class="tooltip">Enter your hourly rate (e.g., 150.00).</span>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="form-group">
+                <label for="Amount">Amount</label>
+                <input asp-for="Amount" class="form-control readonly-input" type="number" readonly />
+                <span class="tooltip">This field is calculated automatically based on hours worked and hourly rate.</span>
+            </div>
+
+            <!-- Document Upload -->
+            <div class="form-group">
+                <label for="Document">Upload Supporting Document</label>
+                <input type="file" name="Document" class="form-control" accept=".pdf,.docx,.xlsx,.jpg,.png" required />
+                <span class="tooltip">Upload a relevant file (PDF, Word, Excel, or image format).</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Submit Claim</button>
+        </form>
     </div>
 
-    <div class="form-group">
-        <label for="HoursWorked">Hours Worked</label>
-        <input asp-for="HoursWorked" class="form-control" type="number" required />
-    </div>
+    <script>
+        // Auto-calculate the total amount based on hours worked and hourly rate
+        const hoursInput = document.querySelector('input[name="HoursWorked"]');
+        const rateInput = document.querySelector('input[name="HourlyRate"]');
+        const amountInput = document.querySelector('input[name="Amount"]');
 
-    <div class="form-group">
-        <label for="HourlyRate">Hourly Rate</label>
-        <input asp-for="HourlyRate" class="form-control" type="number" required />
-    </div>
+        function calculateAmount() {
+            const hours = parseFloat(hoursInput.value) || 0;
+            const rate = parseFloat(rateInput.value) || 0;
+            amountInput.value = (hours * rate).toFixed(2);
+        }
 
-    <div class="form-group">
-        <label for="Amount">Amount</label>
-        <input asp-for="Amount" class="form-control" type="number" readonly />
-    </div>
+        hoursInput.addEventListener('input', calculateAmount);
+        rateInput.addEventListener('input', calculateAmount);
+    </script>
+</body>
+</html>
 
-    <!-- File upload for the document -->
-    <div class="form-group">
-        <label for="Document">Upload PDF Document</label>
-        <input type="file" name="Document" class="form-control" accept=".pdf" required />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit Claim</button>
-</form>
 
 
 

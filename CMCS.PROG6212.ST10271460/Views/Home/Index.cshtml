@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,29 +9,34 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
             width: 80%;
-            margin: 0 auto;
-            padding-top: 50px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .login-section {
+        h2, h3 {
             text-align: center;
-            margin-bottom: 30px;
+            color: #4CAF50;
         }
 
-            .login-section button {
-                padding: 10px 20px;
-                font-size: 16px;
-                cursor: pointer;
-            }
+        p {
+            text-align: center;
+            color: #555;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
         table, th, td {
@@ -45,30 +49,70 @@
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        td {
+            font-size: 14px;
         }
 
         .button-group {
-            text-align: right;
+            text-align: center;
             margin-top: 20px;
         }
 
-            .button-group button {
-                padding: 10px 15px;
-                font-size: 16px;
-                margin-left: 10px;
-                cursor: pointer;
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #45a049;
+            }
+
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #0b7dda;
+            }
+
+        .status {
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+            .status.pending {
+                color: orange;
+            }
+
+            .status.approved {
+                color: green;
+            }
+
+            .status.rejected {
+                color: red;
             }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Login Button Section -->
-        <div class="login-section">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
             <h2>Welcome to the Contract Monthly Claim System</h2>
-            <p>Please log in to view and manage your claims.</p>
-            <button onclick="location.href='@Url.Action("MonthlyClaims", "Claim")'">Login to View Claims</button>
-
+            <p>Manage and track your monthly claims seamlessly.</p>
         </div>
 
         <!-- Monthly Claims Table -->
@@ -83,15 +127,15 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model != null)
+                @if (Model != null && Model.Any())
                 {
                     foreach (var claim in Model)
                     {
                         <tr>
-                            <td>@claim.LecturerName</td> <!-- Changed from ContractorName to LecturerName -->
+                            <td>@claim.LecturerName</td>
                             <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
                             <td>@claim.Amount.ToString("C")</td>
-                            <td>@claim.Status</td>
+                            <td class="status @claim.Status.ToLower()">@claim.Status</td>
                         </tr>
                     }
                 }
@@ -102,15 +146,13 @@
                     </tr>
                 }
             </tbody>
-
         </table>
 
-        <!-- Button Group (Submit Claim and Manage Claims) -->
+        <!-- Button Group -->
         <div class="button-group">
-            <button onclick="location.href='@Url.Action("Submit", "Claim")'">Submit Claim</button>
-            <button onclick="location.href='@Url.Action("Manage", "Claim")'">Manage Claims</button>
+            <button class="btn btn-primary" onclick="location.href='@Url.Action("Submit", "Claim")'">Submit Claim</button>
+            <button class="btn btn-secondary" onclick="location.href='@Url.Action("Manage", "Claim")'">Manage Claims</button>
         </div>
     </div>
 </body>
 </html>
-

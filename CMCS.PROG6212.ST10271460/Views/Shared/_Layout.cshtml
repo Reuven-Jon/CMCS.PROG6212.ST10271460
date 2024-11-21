@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <style>
         /* Hamburger Menu CSS */
         .hamburger {
@@ -41,6 +42,13 @@
             list-style-type: none;
             padding: 0;
             margin: 0;
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
         }
 
             .menu-items.open {
@@ -49,24 +57,42 @@
 
             .menu-items li {
                 padding: 10px;
-                background-color: #333;
-                color: white;
+                border-bottom: 1px solid #ddd;
             }
 
+                .menu-items li:last-child {
+                    border-bottom: none;
+                }
+
                 .menu-items li a {
-                    color: white;
+                    color: #333;
                     text-decoration: none;
+                    display: block;
                 }
 
                 .menu-items li:hover {
-                    background-color: #555;
+                    background-color: #007bff;
                 }
+
+                    .menu-items li:hover a {
+                        color: white;
+                    }
+
+        .nav-item {
+            margin-left: 10px;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">My Dashboard</a>
+            <a class="navbar-brand" href="#">CMCS</a>
             <button class="navbar-toggler menu-btn" type="button" onclick="toggleMenu()">
                 <span class="hamburger"></span>
                 <span class="hamburger"></span>
@@ -78,7 +104,7 @@
                         <span class="nav-link">Hello, @Context.Session.GetString("Username")!</span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Login", "Account")">Switch Role</a> <!-- Switch Role Button -->
+                        <a class="nav-link" href="@Url.Action("Login", "Account")">Switch Role</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Logout", "Account")">Logout</a>
@@ -98,12 +124,17 @@
                     <li><a href="/Manager/Dashboard">Dashboard</a></li>
                     <li><a href="/Manager/ManageClaims">Manage Claims</a></li>
                 }
+                @if (Context.Session.GetString("UserRole") == "HR")
+                {
+                    <li><a href="/HR/Dashboard">HR Dashboard</a></li>
+                    <li><a href="/HR/ManageApprovals">Manage Approvals</a></li>
+                }
                 <li><a href="/Account/Logout">Logout</a></li>
             </ul>
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container mt-4">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -118,8 +149,8 @@
     <!-- Toggle Menu Functionality -->
     <script>
         function toggleMenu() {
-            var menu = document.getElementById('hamburger-menu');
-            var menuBtn = document.querySelector('.menu-btn');
+            const menu = document.getElementById('hamburger-menu');
+            const menuBtn = document.querySelector('.menu-btn');
             menu.classList.toggle('open');
             menuBtn.classList.toggle('open');
         }

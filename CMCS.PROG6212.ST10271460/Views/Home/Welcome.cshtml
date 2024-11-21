@@ -13,21 +13,35 @@
     <style>
         body {
             background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
         }
 
         .welcome-container {
             margin-top: 50px;
             text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
         .welcome-header {
             color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        .lead {
+            color: #6c757d;
+            margin-bottom: 30px;
         }
 
         .welcome-btn {
             padding: 15px 25px;
             font-size: 18px;
-            margin: 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
         .btn-lecturer {
@@ -35,10 +49,27 @@
             color: white;
         }
 
+            .btn-lecturer:hover {
+                background-color: #0056b3;
+            }
+
         .btn-coordinator {
             background-color: #28a745;
             color: white;
         }
+
+            .btn-coordinator:hover {
+                background-color: #218838;
+            }
+
+        .btn-hr {
+            background-color: #ffc107;
+            color: white;
+        }
+
+            .btn-hr:hover {
+                background-color: #e0a800;
+            }
     </style>
 </head>
 <body>
@@ -50,6 +81,7 @@
         <div>
             <button class="btn welcome-btn btn-lecturer" onclick="location.href='@Url.Action("Login", "Account", new { role = "Lecturer" })'">Lecturer</button>
             <button class="btn welcome-btn btn-coordinator" onclick="location.href='@Url.Action("Login", "Account", new { role = "Coordinator" })'">Coordinator / Manager</button>
+            <button class="btn welcome-btn btn-hr" onclick="location.href='@Url.Action("Login", "Account", new { role = "HR" })'">HR</button>
         </div>
     </div>
 </body>

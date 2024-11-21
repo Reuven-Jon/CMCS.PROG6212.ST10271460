@@ -39,7 +39,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
             if (claim != null)
             {
-                claim.Status = ClaimStatus.Approved.ToString();
+                claim.Status = ClaimStatus.Approved;
                 _context.SaveChanges();
 
                 // Notify via SignalR
@@ -59,7 +59,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
             if (claim != null)
             {
-                claim.Status = ClaimStatus.Rejected.ToString();
+                claim.Status = ClaimStatus.Rejected;
                 _context.SaveChanges();
 
                 // Notify via SignalR
@@ -69,6 +69,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             return RedirectToAction("Dashboard");
         }
 
+
         public IActionResult Analytics()
         {
             if (HttpContext.Session.GetString("UserRole") != "Manager")
@@ -76,9 +77,9 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            var pendingClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Pending.ToString());
-            var approvedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Approved.ToString());
-            var rejectedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Rejected.ToString());
+            var pendingClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Pending);
+            var approvedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Approved);
+            var rejectedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Rejected);
 
             ViewBag.PendingClaims = pendingClaims;
             ViewBag.ApprovedClaims = approvedClaims;
@@ -86,6 +87,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
             return View();
         }
+
     }
 }
 

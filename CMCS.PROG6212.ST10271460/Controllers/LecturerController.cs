@@ -46,7 +46,8 @@ public class LecturerController : Controller
                 HourlyRate = model.HourlyRate,
                 Amount = model.HoursWorked * model.HourlyRate,
                 DateSubmitted = DateTime.Now,
-                Status = ClaimStatus.Pending.ToString()
+                Status = ClaimStatus.Pending
+
             };
 
             // Validate hours (no weekends or non-working hours)
@@ -95,4 +96,4 @@ public class LecturerController : Controller
         return View(claims);
     }
 }
-
+ 
