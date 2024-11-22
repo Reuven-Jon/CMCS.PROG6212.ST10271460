@@ -20,23 +20,21 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                 HttpContext.Session.SetString("Username", model.Username);
                 HttpContext.Session.SetString("UserRole", model.Role);
 
-                if (model.Role == "Lecturer")
+                switch (model.Role)
                 {
-                    return RedirectToAction("Dashboard", "Lecturer");
-                }
-                else if (model.Role == "Manager")
-                {
-                    return RedirectToAction("Dashboard", "Manager");
-                }
-                else if (model.Role == "HR")
-                {
-                    return RedirectToAction("Dashboard", "HR");
+                    case "Lecturer":
+                        return RedirectToAction("Dashboard", "Lecturer");
+                    case "Manager":
+                        return RedirectToAction("Dashboard", "Manager");
+                    case "HR":
+                        return RedirectToAction("Dashboard", "HR");
                 }
             }
 
             ViewBag.ErrorMessage = "Invalid login credentials.";
             return View(model);
         }
+
 
         public IActionResult Logout()
         {

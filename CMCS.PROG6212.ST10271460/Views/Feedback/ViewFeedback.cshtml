@@ -1,0 +1,25 @@
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Feedback>
+
+<h2>All Feedback</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Content</th>
+            <th>Submitted At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var feedback in Model)
+        {
+            <tr>
+                <td>@feedback.Id</td>
+                <td>@feedback.UserId</td>
+                <td>@feedback.Content</td>
+                <td>@feedback.SubmittedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

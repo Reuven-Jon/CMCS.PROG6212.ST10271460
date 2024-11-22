@@ -1,0 +1,16 @@
+﻿@model CMCS.PROG6212.ST10271460.Models.Feedback
+
+<h2>Submit Feedback</h2>
+<form asp-action="Submit" method="post">
+    <div>
+        <label for="Content">Feedback</label>
+        <textarea id="Content" name="Content" rows="5" required></textarea>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <p>@TempData["SuccessMessage"]</p>
+}
+
