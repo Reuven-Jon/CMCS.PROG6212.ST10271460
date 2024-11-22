@@ -10,8 +10,9 @@ namespace CMCS.PROG6212.ST10271460TEST
     [TestClass]
     public class AccountControllerTests
     {
-        private AccountController _controller;
-        private Mock<HttpContext> _mockHttpContext;
+        private AccountController? _controller;
+        private Mock<HttpContext>? _mockHttpContext;
+
 
         [TestInitialize]
         public void Setup()
@@ -43,7 +44,7 @@ namespace CMCS.PROG6212.ST10271460TEST
             };
 
             // Act
-            var result = _controller.Login(model) as RedirectToActionResult;
+            var result = _controller?.Login(model) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -62,7 +63,7 @@ namespace CMCS.PROG6212.ST10271460TEST
             };
 
             // Act
-            var result = _controller.Login(model) as ViewResult;
+            var result = _controller?.Login(model) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -73,12 +74,13 @@ namespace CMCS.PROG6212.ST10271460TEST
         public void Logout_ClearsSessionAndRedirectsToLogin()
         {
             // Act
-            var result = _controller.Logout() as RedirectToActionResult;
+            var result = _controller?.Logout() as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Login", result?.ActionName);
         }
+
     }
 }
 

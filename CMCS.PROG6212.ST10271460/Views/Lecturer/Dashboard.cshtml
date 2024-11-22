@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecturer Dashboard</title>
     <style>
-        /* Styling remains the same */
         body {
             background-color: #f4f7f6;
             font-family: Arial, sans-serif;
@@ -94,36 +93,40 @@
     </style>
 </head>
 <body>
+
     <div class="container">
         <h2>Lecturer Dashboard</h2>
         <p>Welcome, @Context.Session.GetString("Username")!</p>
 
-        <a href="@Url.Action("SubmitClaim", "Lecturer")" class="btn btn-primary">Submit Claim</a>
-        <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Logout</a>
-
+        <a href="@Url.Action("SubmitClaim", "Lecturer")" class="btn btn-primary"
+           data-bs-toggle="tooltip"
+           data-bs-placement="right"
+           title="Click to submit a new claim.">
+            Submit New Claim
+        </a>
 
         <!-- Summary Section -->
         <div class="summary">
-            <div class="summary-card">
+            <div class="summary-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total number of claims submitted.">
                 <h4>Total Claims</h4>
                 <p>@Model?.Count() ?? 0</p>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Number of claims pending review.">
                 <h4>Pending Claims</h4>
-                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending) ?? 0</p>
+                <p>@Model?.Count(c => c.Status == ClaimStatus.Pending) ?? 0</p>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Number of claims that have been approved.">
                 <h4>Approved Claims</h4>
-                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved) ?? 0</p>
+                <p>@Model?.Count(c => c.Status == ClaimStatus.Approved) ?? 0</p>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Number of claims that were rejected.">
                 <h4>Rejected Claims</h4>
-                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected) ?? 0</p>
+                <p>@Model?.Count(c => c.Status == ClaimStatus.Rejected) ?? 0</p>
             </div>
         </div>
 
         <!-- Claims Table -->
-        <table>
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Claim Period</th>
@@ -145,14 +148,15 @@
                             <td>@claim.HoursWorked</td>
                             <td>@claim.HourlyRate.ToString("C")</td>
                             <td>@claim.Amount.ToString("C")</td>
-                            <td>
-                                <span class="status @claim.Status.ToString().ToLowerInvariant()">@claim.Status</span>
-                            </td>
+                            <td><span class="status @claim.Status.ToString().ToLower()">@claim.Status</span></td>
                             <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
                             <td>
-                                @if (!string.IsNullOrEmpty(claim?.DocumentPath))
+                                @if (!string.IsNullOrEmpty(claim.DocumentPath))
                                 {
-                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info">View Document</a>
+                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="left"
+                                       title="Click to view the uploaded document.">View Document</a>
                                 }
                                 else
                                 {
@@ -171,6 +175,37 @@
             </tbody>
         </table>
     </div>
+
+    <div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" href="?filter=@Context.Request.Query["filter"]&page=@i">@i</a>
+
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.17/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/claimHub")
+            .build();
+
+        connection.start().then(() => {
+            console.log("SignalR connected.");
+        });
+
+        // Listen for updates
+        connection.on("ReceiveClaimUpdate", (claimId, status, note) => {
+            alert(`Claim ID: ${claimId} has been ${status}. Note: ${note}`);
+            location.reload(); // Refresh the page to show updated claims
+        });
+    </script>
 </body>
 </html>
 

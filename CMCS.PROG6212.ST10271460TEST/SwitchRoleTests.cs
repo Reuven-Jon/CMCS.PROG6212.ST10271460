@@ -8,7 +8,7 @@ namespace CMCS.PROG6212.ST10271460TEST
     [TestClass]
     public class SwitchRoleTests
     {
-        private AccountController _controller;
+        private AccountController? _controller;
 
         [TestInitialize]
         public void Setup()

@@ -37,6 +37,7 @@ namespace CMCS.Tests
             };
         }
 
+
         [TestMethod]
         public async Task SubmitClaim_ValidModel_AddsClaimAndRedirects()
         {
@@ -55,12 +56,13 @@ namespace CMCS.Tests
             fileMock.Setup(f => f.Length).Returns(100);
 
             // Act
-            var result = await _controller.SubmitClaim(model, fileMock.Object) as RedirectToActionResult;
+            var result = await _controller!.SubmitClaim(model, fileMock.Object) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("YourClaims", result.ActionName);
+            Assert.AreEqual("Dashboard", result.ActionName); // Ensure it matches the action in your controller
         }
+
     }
 }
 

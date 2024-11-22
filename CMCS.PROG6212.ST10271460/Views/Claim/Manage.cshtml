@@ -107,41 +107,47 @@
         </div>
 
         <!-- Claims Table -->
-        <table id="claimsTable">
-            <thead>
-                <tr>
-                    <th>Lecturer Name</th>
-                    <th>Claim Period</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var claim in Model)
-                {
-                    <tr>
-                        <td>@claim.LecturerName</td>
-                        <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
-                        <td>@claim.Amount.ToString("C")</td>
-                        <td>
-                            <span class="status @claim.Status.ToString().ToLower()">@claim.Status</span>
-                        </td>
-                        <td>
-                            @if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)
-                            {
-                                <a href="/Manager/ApproveClaim/@claim.Id" class="btn approve">Approve</a>
-                                <a href="/Manager/RejectClaim/@claim.Id" class="btn reject">Reject</a>
-                            }
-                            else
-                            {
-                                <span>N/A</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Lecturer Name</th>
+            <th>Claim Period</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr>
+                <td>@claim.LecturerName</td>
+                <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                <td>@claim.Amount.ToString("C")</td>
+                <td>@claim.Status</td>
+                <td>
+                    @if (claim.Status == ClaimStatus.Pending)
+                    {
+                        <form method="post" asp-action="ApproveClaim">
+                            <input type="hidden" name="id" value="@claim.Id" />
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form method="post" asp-action="RejectClaim">
+                            <input type="hidden" name="id" value="@claim.Id" />
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
     </div>
 
     <script>

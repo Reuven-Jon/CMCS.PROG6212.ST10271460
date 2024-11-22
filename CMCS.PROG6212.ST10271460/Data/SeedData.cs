@@ -1,49 +1,91 @@
-﻿using System;
-using CMCS.PROG6212.ST10271460.Models;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using CMCS.PROG6212.ST10271460.Controllers;
+using CMCS.PROG6212.ST10271460.Models;
+
 
 namespace CMCS.PROG6212.ST10271460.Data
 {
     public static class SeedData
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static async Task Initialize(IServiceProvider serviceProvider)
         {
-            using (var context = serviceProvider.GetRequiredService<ApplicationDbContext>())
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+            // Ensure the database is created
+            context.Database.EnsureCreated();
+
+            // Seed Roles
+            string[] roles = { "Lecturer", "HR", "AcademicManager" };
+            foreach (var role in roles)
             {
-                // Ensure the database is empty before seeding
-                if (context.Users.Any() || context.Claims.Any() || context.Feedbacks.Any())
+                if (!await roleManager.RoleExistsAsync(role))
                 {
-                    return; // Database has already been seeded
+                    await roleManager.CreateAsync(new IdentityRole(role));
                 }
+            }
 
-                // Seed Users
-                context.Users.AddRange(
-                              new User { Username = "PEEL", Password = "password1", Role = Role.HR },
-                              new User { Username = "JOHN", Password = "password2", Role = Role.Lecturer },
-                              new User { Username = "MARK", Password = "password3", Role = Role.AcademicManager }
-                          );
-                
+            // Seed Users
+            var lecturerUser = new IdentityUser { UserName = "lecturer@example.com", Email = "lecturer@example.com" };
+            if (!userManager.Users.Any(u => u.UserName == lecturerUser.UserName))
+            {
+                var result = await userManager.CreateAsync(lecturerUser, "Lecturer@123");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(lecturerUser, "Lecturer");
+                }
+            }
 
+            var hrUser = new IdentityUser { UserName = "hr@example.com", Email = "hr@example.com" };
+            if (!userManager.Users.Any(u => u.UserName == hrUser.UserName))
+            {
+                var result = await userManager.CreateAsync(hrUser, "HR@123");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(hrUser, "HR");
+                }
+            }
 
-                // Seed Claims
+            var managerUser = new IdentityUser { UserName = "manager@example.com", Email = "manager@example.com" };
+            if (!userManager.Users.Any(u => u.UserName == managerUser.UserName))
+            {
+                var result = await userManager.CreateAsync(managerUser, "Manager@123");
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(managerUser, "AcademicManager");
+                }
+            }
+
+            // Seed Claims
+            if (!context.Claims.Any())
+            {
                 context.Claims.AddRange(
-                    new Claim { Id = 1, LecturerName = "Lecturer1", ClaimPeriod = new DateTime(2024, 10, 1), HoursWorked = 40, HourlyRate = 150, Amount = 6000, Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Pending, DateSubmitted = DateTime.Now },
-                    new Claim { Id = 2, LecturerName = "Lecturer1", ClaimPeriod = new DateTime(2024, 9, 1), HoursWorked = 35, HourlyRate = 140, Amount = 4900, Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Approved, DateSubmitted = DateTime.Now },
-                    new Claim { Id = 3, LecturerName = "Lecturer1", ClaimPeriod = new DateTime(2024, 8, 1), HoursWorked = 20, HourlyRate = 130, Amount = 2600, Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Rejected, DateSubmitted = DateTime.Now }
+                    new Claim
+                    {
+                        LecturerName = "lecturer@example.com",
+                        ClaimPeriod = new DateTime(2024, 10, 1),
+                        HoursWorked = 40,
+                        HourlyRate = 150,
+                        Amount = 6000,
+                        Status = Models.ClaimStatus.Pending,
+                        DateSubmitted = DateTime.Now
+                    },
+                    new Claim
+                    {
+                        LecturerName = "lecturer@example.com",
+                        ClaimPeriod = new DateTime(2024, 9, 1),
+                        HoursWorked = 35,
+                        HourlyRate = 140,
+                        Amount = 4900,
+                        Status = Models.ClaimStatus.Approved,
+                        DateSubmitted = DateTime.Now
+                    }
                 );
-
-                // Seed Feedback
-                context.Feedbacks.AddRange(
-                    new Feedback { Id = 1, UserId = 1, Content = "Great system, but the approval process can be faster!", SubmittedAt = DateTime.Now },
-                    new Feedback { Id = 2, UserId = 2, Content = "UI could use some improvements for accessibility.", SubmittedAt = DateTime.Now },
-                    new Feedback { Id = 3, UserId = 3, Content = "HR needs better tools for managing claims.", SubmittedAt = DateTime.Now }
-                );
-
-                // Save Changes
                 context.SaveChanges();
             }
         }
     }
 }
+
 

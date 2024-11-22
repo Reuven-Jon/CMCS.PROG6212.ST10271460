@@ -151,6 +151,24 @@
                 }
             </tbody>
         </table>
+        <div>
+            <label for="filter">Filter by Status:</label>
+            <select id="filter" onchange="applyFilter()">
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+
+        <script>
+            function applyFilter() {
+                const filter = document.getElementById('filter').value;
+                const url = new URL(window.location.href);
+                url.searchParams.set('filter', filter); // Add filter parameter to the query string
+                window.location.href = url.toString(); // Redirect with the updated query string
+            }
+        </script>
 
         <!-- Button Group -->
         <div class="button-group">
@@ -158,6 +176,14 @@
             <button class="btn btn-secondary" onclick="location.href='@Url.Action("Manage", "Claim")'">Manage Claims</button>
         </div>
     </div>
+
+    <script>
+        connection.on("ReceiveClaimUpdate", (claimId, status, note) => {
+            alert(`Claim ID: ${claimId} status updated: ${status}`);
+            location.reload(); // Refresh the claims table
+        });
+    </script>
+
 </body>
 </html>
 

@@ -39,7 +39,7 @@
             margin-bottom: 5px;
         }
 
-        input, textarea, select {
+        input, select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -48,7 +48,7 @@
             font-size: 16px;
         }
 
-            input:focus, textarea:focus, select:focus {
+            input:focus {
                 outline: none;
                 border-color: #4CAF50;
                 box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
@@ -62,30 +62,19 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            width: 100%;
         }
 
             .btn:hover {
                 background-color: #45a049;
-                transition: background-color 0.3s ease;
             }
-
-        .tooltip {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 5px;
-        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h2>Submit a New Claim</h2>
-        <form asp-action="SubmitClaim" asp-controller="Lecturer" method="post" enctype="multipart/form-data">
+        <form id="submitClaimForm" asp-action="SubmitClaim" asp-controller="Lecturer" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="ClaimPeriod">Claim Period:</label>
                 <input type="month" id="ClaimPeriod" name="ClaimPeriod" value="@Model?.ClaimPeriod.ToString("yyyy-MM")" required class="form-control" />
@@ -106,8 +95,36 @@
                 <input type="file" id="Document" name="Document" accept=".pdf,.doc,.docx,.jpg,.png" class="form-control" />
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit Claim</button>
+            <button type="button" id="submitClaimButton" class="btn">Submit Claim</button>
         </form>
     </div>
+
+    <script>
+        document.getElementById("submitClaimButton").addEventListener("click", function () {
+            // Submit the form programmatically
+            const form = document.getElementById("submitClaimForm");
+            form.submit();
+
+            // Redirect to the Dashboard after form submission
+            window.location.href = "@Url.Action("Dashboard", "Lecturer")";
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.17/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/claimHub")
+            .build();
+
+        connection.start().then(() => {
+            console.log("SignalR connected.");
+        });
+
+        connection.on("RefreshClaims", () => {
+            location.reload(); // Refresh the dashboard when new claims are submitted
+        });
+    </script>
+
 </body>
 </html>
+
