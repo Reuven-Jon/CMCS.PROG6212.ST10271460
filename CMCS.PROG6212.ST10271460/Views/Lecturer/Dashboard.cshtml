@@ -153,7 +153,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(claim.DocumentPath))
                                 {
-                                    <a href="@claim.DocumentPath" target="_blank" class="btn btn-info"
+                                    <a href="@Url.Content(claim.DocumentPath)" target="_blank" class="btn btn-info"
                                        data-bs-toggle="tooltip"
                                        data-bs-placement="left"
                                        title="Click to view the uploaded document.">View Document</a>

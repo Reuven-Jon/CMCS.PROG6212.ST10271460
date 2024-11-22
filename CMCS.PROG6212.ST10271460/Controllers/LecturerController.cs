@@ -37,7 +37,6 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile document)
         {
-            // Ensure the user has the Lecturer role
             if (HttpContext.Session.GetString("UserRole") != "Lecturer")
             {
                 return RedirectToAction("AccessDenied", "Account");
@@ -45,15 +44,26 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
             if (ModelState.IsValid)
             {
-                var username = HttpContext.Session.GetString("Username");
+                // Check for invalid inputs
+                if (model.HoursWorked <= 0)
+                {
+                    ModelState.AddModelError(nameof(model.HoursWorked), "Hours worked must be greater than 0.");
+                    return View(model);
+                }
 
+                if (model.HourlyRate <= 0)
+                {
+                    ModelState.AddModelError(nameof(model.HourlyRate), "Hourly rate must be greater than 0.");
+                    return View(model);
+                }
+
+                var username = HttpContext.Session.GetString("Username");
                 if (string.IsNullOrEmpty(username))
                 {
                     ModelState.AddModelError(string.Empty, "Username is missing.");
                     return View(model);
                 }
 
-                // Create a new Claim object
                 var claim = new Claim
                 {
                     LecturerName = username,
@@ -65,37 +75,35 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                     Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)
                 };
 
-                // Handle document upload if provided
+                // Handle document upload
                 if (document != null && document.Length > 0)
                 {
-                    var fileName = $"{Guid.NewGuid()}_{document.FileName}"; // Unique file name
-                    var filePath = Path.Combine(_environment.WebRootPath, "uploads", fileName);
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath)!); // Ensure directory exists
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    try
                     {
-                        await document.CopyToAsync(stream);
+                        var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(document.FileName)}";
+                        var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+                        Directory.CreateDirectory(uploadsFolder); // Ensure the uploads folder exists
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await document.CopyToAsync(stream);
+                        }
+
+                        claim.DocumentPath = $"/uploads/{fileName}";
                     }
-
-                    claim.DocumentPath = "/uploads/" + fileName;
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError(string.Empty, $"Failed to save the document: {ex.Message}");
+                        return View(model);
+                    }
                 }
 
-                try
-                {
-                    _context.Claims.Add(claim);
-                    await _context.SaveChangesAsync();
+                _context.Claims.Add(claim);
+                await _context.SaveChangesAsync();
+                await _claimHubContext.Clients.All.SendAsync("RefreshClaims");
 
-                    // Notify all connected clients about the new claim using SignalR
-                    await _claimHubContext.Clients.All.SendAsync("RefreshClaims");
-
-                    // Redirect to the Dashboard after submission
-                    return RedirectToAction("Dashboard");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
-                }
+                return RedirectToAction("Dashboard");
             }
 
             return View(model);

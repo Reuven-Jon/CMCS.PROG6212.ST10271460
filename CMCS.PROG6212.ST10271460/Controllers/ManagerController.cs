@@ -39,26 +39,49 @@ public class ManagerController : Controller
 
 
     [HttpPost]
-    public IActionResult ApproveClaim(int id)
+    public async Task<IActionResult> ApproveClaim(int id)
     {
         var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
         if (claim != null)
         {
-            claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved);
+            // Validate hours worked fall within contractual limits (e.g., 0-200 hours)
+            if (claim.HoursWorked < 0 || claim.HoursWorked > 200)
+            {
+                TempData["Message"] = "Approval failed: Hours worked exceed the allowed range.";
+                return RedirectToAction("ManageClaims");
+            }
+
+            claim.Status = CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved;
             _context.SaveChanges();
+
+            // Notify all connected clients
+            await _hubContext.Clients.All.SendAsync("ReceiveClaimUpdate", claim.Id, claim.Status.ToString(), "Approved by manager.");
+
             TempData["Message"] = "Claim approved successfully.";
         }
         return RedirectToAction("ManageClaims");
     }
 
     [HttpPost]
-    public IActionResult RejectClaim(int id)
+    public async Task<IActionResult> RejectClaim(int id, string rejectionNote)
     {
         var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
         if (claim != null)
         {
-            claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected);
+            // Require a rejection note
+            if (string.IsNullOrWhiteSpace(rejectionNote))
+            {
+                TempData["Message"] = "Rejection failed: A reason must be provided.";
+                return RedirectToAction("ManageClaims");
+            }
+
+            claim.Status = CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected;
+            claim.Notes = rejectionNote; // Save rejection note
             _context.SaveChanges();
+
+            // Notify all connected clients
+            await _hubContext.Clients.All.SendAsync("ReceiveClaimUpdate", claim.Id, claim.Status.ToString(), rejectionNote);
+
             TempData["Message"] = "Claim rejected successfully.";
         }
         return RedirectToAction("ManageClaims");

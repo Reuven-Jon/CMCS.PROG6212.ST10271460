@@ -37,7 +37,7 @@ namespace CMCS.PROG6212.ST10271460.Models
         public DateTime DateSubmitted { get; set; } // Submission date
 
         [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters.")]
-        public string Notes { get; set; } = string.Empty; // Additional notes
+        public string? Notes { get; set; }
 
         [StringLength(255, ErrorMessage = "Document path cannot exceed 255 characters.")]
         public string DocumentPath { get; set; } = string.Empty; // Path to uploaded document

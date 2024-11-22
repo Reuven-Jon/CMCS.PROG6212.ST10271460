@@ -8,6 +8,8 @@
 
   <ItemGroup>
 
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+
     <PackageReference Include="jQuery" Version="3.7.1" />
     <PackageReference Include="jQuery.Validation" Version="1.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />

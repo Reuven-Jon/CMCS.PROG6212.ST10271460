@@ -92,7 +92,7 @@
 
             <div class="form-group">
                 <label for="Document">Upload Supporting Document:</label>
-                <input type="file" id="Document" name="Document" accept=".pdf,.doc,.docx,.jpg,.png" class="form-control" />
+                <input type="file" id="Document" name="Document" accept=".pdf,.doc,.docx,.jpg,.png" class="form-control" /> <small class="form-text text-muted">Allowed formats: PDF, DOC, DOCX, JPG, PNG</small>
             </div>
 
             <button type="button" id="submitClaimButton" class="btn">Submit Claim</button>
@@ -100,15 +100,26 @@
     </div>
 
     <script>
-        document.getElementById("submitClaimButton").addEventListener("click", function () {
-            // Submit the form programmatically
-            const form = document.getElementById("submitClaimForm");
-            form.submit();
+        document.getElementById("submitClaimButton").addEventListener("click", function (e) {
+            const hoursWorked = parseFloat(document.getElementById("HoursWorked").value);
+            const hourlyRate = parseFloat(document.getElementById("HourlyRate").value);
 
-            // Redirect to the Dashboard after form submission
-            window.location.href = "@Url.Action("Dashboard", "Lecturer")";
+            if (isNaN(hoursWorked) || hoursWorked <= 0) {
+                alert("Hours worked must be greater than 0.");
+                e.preventDefault();
+                return;
+            }
+
+            if (isNaN(hourlyRate) || hourlyRate <= 0) {
+                alert("Hourly rate must be greater than 0.");
+                e.preventDefault();
+                return;
+            }
+
+            document.getElementById("submitClaimForm").submit();
         });
     </script>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.17/signalr.min.js"></script>
     <script>

@@ -1,0 +1,47 @@
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Lecturer>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Lecturers</title>
+</head>
+<body>
+    <h2>Manage Lecturers</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Hourly Rate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lecturer in Model)
+            {
+                <tr>
+                    <td>@lecturer.Name</td>
+                    <td>@lecturer.Email</td>
+                    <td>@lecturer.HourlyRate</td>
+                    <td>
+                        <form asp-action="UpdateLecturer" asp-controller="HR" method="post">
+                            <input type="hidden" name="Id" value="@lecturer.Id" />
+                            <input type="text" name="Name" value="@lecturer.Name" required />
+                            <input type="email" name="Email" value="@lecturer.Email" required />
+                            <input type="number" step="0.01" name="HourlyRate" value="@lecturer.HourlyRate" required />
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (TempData["Message"] != null)
+    {
+        <div>@TempData["Message"]</div>
+    }
+</body>
+</html>

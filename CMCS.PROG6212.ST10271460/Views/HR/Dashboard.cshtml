@@ -96,6 +96,8 @@
         <p>Welcome, @Context.Session.GetString("Username")!</p>
 
         <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Logout</a>
+        <a href="@Url.Action("DownloadApprovedClaimsReport", "HR")" class="btn btn-primary">Download Approved Claims Report</a>
+        <a href="@Url.Action("ManageLecturers", "HR")" class="btn btn-secondary">Manage Lecturers</a>
 
         <!-- Summary Section -->
         <div class="summary">

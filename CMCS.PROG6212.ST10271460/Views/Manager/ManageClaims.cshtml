@@ -145,6 +145,7 @@
                                     </form>
                                     <form asp-action="RejectClaim" asp-controller="Manager" method="post" style="display:inline;">
                                         <input type="hidden" name="id" value="@claim.Id" />
+                                        <textarea name="rejectionNote" placeholder="Reason for rejection" required></textarea>
                                         <button type="submit" class="btn btn reject">Reject</button>
                                     </form>
                                 }
@@ -153,6 +154,7 @@
                                     <span>N/A</span>
                                 }
                             </td>
+
                         </tr>
                     }
                 }
@@ -164,6 +166,23 @@
                 }
             </tbody>
         </table>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.17/signalr.min.js"></script>
+        <script>
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/claimHub")
+                .build();
+
+            connection.start().then(() => {
+                console.log("SignalR connected.");
+            });
+
+            connection.on("ReceiveClaimUpdate", (claimId, status, note) => {
+                alert(`Claim ID: ${claimId} has been updated to ${status}. Note: ${note}`);
+                location.reload(); // Refresh the page to reflect changes
+            });
+        </script>
+
 
         <!-- Display Message -->
         @if (TempData["Message"] != null)

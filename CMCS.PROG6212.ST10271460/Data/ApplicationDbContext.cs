@@ -14,6 +14,8 @@ namespace CMCS.PROG6212.ST10271460.Data
         public DbSet<Document> Documents { get; set; }
         public DbSet<Approval> Approvals { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Lecturer> Lecturers { get; set; }
+
     }
 
 }
