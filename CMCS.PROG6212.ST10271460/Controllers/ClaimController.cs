@@ -1,5 +1,6 @@
 ﻿using CMCS.PROG6212.ST10271460.Data;
 using CMCS.PROG6212.ST10271460.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -47,24 +48,16 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             return View(claim);
         }
 
+        [Authorize(Roles = "HR")]
         public IActionResult Manage()
         {
-            if (HttpContext.Session.GetString("UserRole") != "HR")
-            {
-                return RedirectToAction("AccessDenied", "Account");
-            }
-
             var claims = _context.Claims.ToList();
             return View(claims);
         }
 
+        [Authorize(Roles = "Manager")]
         public IActionResult StatusReport()
         {
-            if (HttpContext.Session.GetString("UserRole") != "Manager")
-            {
-                return RedirectToAction("AccessDenied", "Account");
-            }
-
             var pendingClaims = _context.Claims.Count(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Pending);
             var approvedClaims = _context.Claims.Count(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Approved);
             var rejectedClaims = _context.Claims.Count(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Rejected);
@@ -75,6 +68,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 
             return View();
         }
+
 
 
 

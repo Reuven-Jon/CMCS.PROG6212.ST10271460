@@ -1,38 +1,119 @@
-﻿
+﻿@model CMCS.PROG6212.ST10271460.Models.LoginViewModel
 
-@model CMCS.PROG6212.ST10271460.Models.LoginViewModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
 
-<h2>Login as @ViewBag.Role</h2>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-<form method="post" asp-action="Login">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input asp-for="Username" class="form-control" required />
-        <span asp-validation-for="Username" class="text-danger"></span>
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .tooltip-icon {
+            margin-left: 5px;
+            font-size: 0.9em;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .tooltip-text {
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .form-group .info {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="text-center">Login</h2>
+        <form method="post" asp-action="Login">
+            <!-- Username Field -->
+            <div class="form-group">
+                <label for="username">
+                    Username
+                    <span class="tooltip-icon" title="Enter any 4-letter username. Example: 'User'">?</span>
+                </label>
+                <input asp-for="Username" class="form-control" id="username" placeholder="e.g., User" required />
+                <span asp-validation-for="Username" class="text-danger"></span>
+                <small class="tooltip-text">Enter a username with exactly 4 characters.</small>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="password">
+                    Password
+                    <span class="tooltip-icon" title="Enter an 8-character password. Example: 'Pass1234'">?</span>
+                </label>
+                <input asp-for="Password" class="form-control" id="password" type="password" placeholder="e.g., Pass1234" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <small class="tooltip-text">Enter a password with exactly 8 characters.</small>
+            </div>
+
+            <!-- Role Selection Field -->
+            <div class="form-group">
+                <label for="role">
+                    Role
+                    <span class="tooltip-icon" title="Select your role: Lecturer, Manager, or HR.">?</span>
+                </label>
+                <select asp-for="Role" class="form-control" id="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="Lecturer">Lecturer</option>
+                    <option value="AcademicManager">Manager</option>
+                    <option value="HR">HR</option>
+                </select>
+                <small class="tooltip-text">Choose the role you're logging in as.</small>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </div>
+
+            <!-- Error Message -->
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger mt-3">@ViewBag.ErrorMessage</div>
+            }
+        </form>
     </div>
+</body>
+</html>
 
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input asp-for="Password" class="form-control" type="password" required />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
 
-    <div class="form-group">
-        <label for="role">Role</label>
-        <select asp-for="Role" class="form-control" required>
-            <option value="Lecturer">Lecturer</option>
-            <option value="Manager">Manager</option>
-            <option value="HR">HR</option>
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Login</button>
-
-    @if (ViewBag.ErrorMessage != null)
-    {
-        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
-    }
-</form>
 
 
 

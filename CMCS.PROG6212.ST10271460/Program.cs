@@ -15,11 +15,17 @@ builder.Services.AddSignalR();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; // Redirect to login page if unauthorized
-        options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect if access is denied
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AcademicManagerPolicy", policy => policy.RequireRole("AcademicManager"));
+    options.AddPolicy("LecturerPolicy", policy => policy.RequireRole("Lecturer"));
+    options.AddPolicy("HRPolicy", policy => policy.RequireRole("HR"));
+});
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("CMCSDatabase"));

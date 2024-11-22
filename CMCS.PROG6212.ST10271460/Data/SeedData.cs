@@ -19,10 +19,12 @@ namespace CMCS.PROG6212.ST10271460.Data
 
                 // Seed Users
                 context.Users.AddRange(
-                    new User { Id = 1, Username = "Lecturer1", Password = "password", Role = Role.Lecturer },
-                    new User { Id = 2, Username = "Manager1", Password = "password", Role = Role.AcademicManager },
-                    new User { Id = 3, Username = "HR1", Password = "password", Role = Role.HR }
-                );
+                              new User { Username = "PEEL", Password = "password1", Role = Role.HR },
+                              new User { Username = "JOHN", Password = "password2", Role = Role.Lecturer },
+                              new User { Username = "MARK", Password = "password3", Role = Role.AcademicManager }
+                          );
+                
+
 
                 // Seed Claims
                 context.Claims.AddRange(
