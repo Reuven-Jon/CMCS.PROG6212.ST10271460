@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CMCS.PROG6212.ST10271460.Data;
 
 public class LecturerController : Controller
 {
@@ -20,6 +21,7 @@ public class LecturerController : Controller
     [HttpGet]
     public IActionResult SubmitClaim()
     {
+        // Check if the logged-in user is a Lecturer
         if (HttpContext.Session.GetString("UserRole") != "Lecturer")
         {
             return RedirectToAction("AccessDenied", "Account");
@@ -46,17 +48,11 @@ public class LecturerController : Controller
                 HourlyRate = model.HourlyRate,
                 Amount = model.HoursWorked * model.HourlyRate,
                 DateSubmitted = DateTime.Now,
-                Status = ClaimStatus.Pending
+                Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Pending
 
             };
 
-            // Validate hours (no weekends or non-working hours)
-            if (model.ClaimPeriod.DayOfWeek == DayOfWeek.Saturday || model.ClaimPeriod.DayOfWeek == DayOfWeek.Sunday)
-            {
-                ModelState.AddModelError("", "Cannot log hours on weekends.");
-                return View(model);
-            }
-
+            // File validation for document upload
             if (Document != null && Document.Length > 0)
             {
                 var allowedExtensions = new[] { ".pdf", ".docx", ".xlsx" };
@@ -96,4 +92,4 @@ public class LecturerController : Controller
         return View(claims);
     }
 }
- 
+

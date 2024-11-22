@@ -1,26 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using CMCS.PROG6212.ST10271460.Models;
-using Microsoft.AspNetCore.SignalR;
-using CMCS.PROG6212.ST10271460.Hubs;
 using System.Linq;
+using CMCS.PROG6212.ST10271460.Data;
 
 namespace CMCS.PROG6212.ST10271460.Controllers
 {
+    [Authorize(Roles = "AcademicManager")]
     public class ManagerController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public ManagerController(ApplicationDbContext context, IHubContext<NotificationHub> hubContext)
+        public ManagerController(ApplicationDbContext context)
         {
             _context = context;
-            _hubContext = hubContext;
         }
 
         public IActionResult Dashboard()
         {
-            if (HttpContext.Session.GetString("UserRole") != "Manager")
+            if (HttpContext.Session.GetString("UserRole") != "AcademicManager")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
@@ -29,67 +27,43 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             return View(claims);
         }
 
-        public IActionResult ApproveClaim(int id)
+        public IActionResult ManageClaims()
         {
-            if (HttpContext.Session.GetString("UserRole") != "Manager")
+            if (HttpContext.Session.GetString("UserRole") != "AcademicManager")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
+            var pendingClaims = _context.Claims.Where(c => c.Status.Equals(ClaimStatus.Pending)).ToList();
+            return View(pendingClaims);
+        }
+
+        [HttpPost]
+        public IActionResult ApproveClaim(int claimId)
+        {
+            var claim = _context.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
                 claim.Status = ClaimStatus.Approved;
                 _context.SaveChanges();
-
-                // Notify via SignalR
-                _hubContext.Clients.All.SendAsync("Notify", $"Claim ID {id} has been approved.");
             }
-
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("ManageClaims");
         }
 
-        public IActionResult RejectClaim(int id)
+        [HttpPost]
+        public IActionResult RejectClaim(int claimId)
         {
-            if (HttpContext.Session.GetString("UserRole") != "Manager")
-            {
-                return RedirectToAction("AccessDenied", "Account");
-            }
-
-            var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
+            var claim = _context.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
                 claim.Status = ClaimStatus.Rejected;
                 _context.SaveChanges();
-
-                // Notify via SignalR
-                _hubContext.Clients.All.SendAsync("Notify", $"Claim ID {id} has been rejected.");
             }
-
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("ManageClaims");
         }
-
-
-        public IActionResult Analytics()
-        {
-            if (HttpContext.Session.GetString("UserRole") != "Manager")
-            {
-                return RedirectToAction("AccessDenied", "Account");
-            }
-
-            var pendingClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Pending);
-            var approvedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Approved);
-            var rejectedClaims = _context.Claims.Count(c => c.Status == ClaimStatus.Rejected);
-
-            ViewBag.PendingClaims = pendingClaims;
-            ViewBag.ApprovedClaims = approvedClaims;
-            ViewBag.RejectedClaims = rejectedClaims;
-
-            return View();
-        }
-
     }
 }
+
 
 
 

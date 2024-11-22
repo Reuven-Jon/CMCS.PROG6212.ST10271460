@@ -2,7 +2,9 @@
 {
     public class User
     {
-        public int UserID { get; set; } // Primary Key
+       
+        public int Id { get; set; } // Ensure this property exists
+        public string Username { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty; // Name of the user
         public string Email { get; set; } = string.Empty; // Email of the user
         public string Password { get; set; } = string.Empty; // Password for login
@@ -14,10 +16,10 @@
     public enum Role
     {
         Lecturer,
-        Manager,
-        Coordinator,
-        Contractor,
-        Admin
+        AcademicManager,
+        HR,
+        
+        
     }
 }
 

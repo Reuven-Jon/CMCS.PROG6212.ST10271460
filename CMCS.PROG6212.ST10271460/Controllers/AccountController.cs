@@ -48,6 +48,12 @@ namespace CMCS.PROG6212.ST10271460.Controllers
                    !password.Any(char.IsWhiteSpace) &&
                    !password.Contains("=") && !password.Contains("+");
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
     }
 }
 

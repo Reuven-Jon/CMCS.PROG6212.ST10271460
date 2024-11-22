@@ -25,17 +25,17 @@
             display: inline-block;
         }
 
-            .menu-btn.open .hamburger:nth-child(1) {
-                transform: rotate(-45deg) translate(-5px, 5px);
-            }
+        .menu-btn.open .hamburger:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 5px);
+        }
 
-            .menu-btn.open .hamburger:nth-child(2) {
-                opacity: 0;
-            }
+        .menu-btn.open .hamburger:nth-child(2) {
+            opacity: 0;
+        }
 
-            .menu-btn.open .hamburger:nth-child(3) {
-                transform: rotate(45deg) translate(-5px, -5px);
-            }
+        .menu-btn.open .hamburger:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -5px);
+        }
 
         .menu-items {
             display: none;
@@ -51,32 +51,32 @@
             overflow: hidden;
         }
 
-            .menu-items.open {
-                display: block;
-            }
+        .menu-items.open {
+            display: block;
+        }
 
-            .menu-items li {
-                padding: 10px;
-                border-bottom: 1px solid #ddd;
-            }
+        .menu-items li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
 
-                .menu-items li:last-child {
-                    border-bottom: none;
-                }
+        .menu-items li:last-child {
+            border-bottom: none;
+        }
 
-                .menu-items li a {
-                    color: #333;
-                    text-decoration: none;
-                    display: block;
-                }
+        .menu-items li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
 
-                .menu-items li:hover {
-                    background-color: #007bff;
-                }
+        .menu-items li:hover {
+            background-color: #007bff;
+        }
 
-                    .menu-items li:hover a {
-                        color: white;
-                    }
+        .menu-items li:hover a {
+            color: white;
+        }
 
         .nav-item {
             margin-left: 10px;
@@ -98,50 +98,6 @@
                 <span class="hamburger"></span>
                 <span class="hamburger"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <span class="nav-link">Hello, @Context.Session.GetString("Username")!</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Login", "Account")">Switch Role</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Logout", "Account")">Logout</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Feedback" asp-action="Submit">Submit Feedback</a>
-                    </li>
-
-                </ul>
-            </div>
-
-            <!-- Hamburger Menu Items -->
-            <!-- Updated Hamburger Menu Items -->
-            <ul id="hamburger-menu" class="menu-items">
-                @if (Context.Session.GetString("UserRole") == "Lecturer")
-                {
-                    <li><a href="/Lecturer/Dashboard">Dashboard</a></li>
-                    <li><a href="/Lecturer/SubmitClaim">Submit Claims</a></li>
-                    <li><a href="/Feedback/Submit">Submit Feedback</a></li>
-                    <li><a href="/Feedback/ViewFeedback">View Feedback</a></li>
-                }
-                @if (Context.Session.GetString("UserRole") == "Coordinator" || Context.Session.GetString("UserRole") == "Manager")
-                {
-                    <li><a href="/Manager/Dashboard">Dashboard</a></li>
-                    <li><a href="/Manager/ManageClaims">Manage Claims</a></li>
-                    <li><a href="/Feedback/Submit">Submit Feedback</a></li>
-                    <li><a href="/Feedback/ViewFeedback">View Feedback</a></li>
-                }
-                @if (Context.Session.GetString("UserRole") == "HR")
-                {
-                    <li><a href="/HR/Dashboard">HR Dashboard</a></li>
-                    <li><a href="/HR/ManageApprovals">Manage Approvals</a></li>
-                    <li><a href="/Feedback/Submit">Submit Feedback</a></li>
-                    <li><a href="/Feedback/ViewFeedback">View Feedback</a></li>
-                }
-                <li><a href="/Account/Logout">Logout</a></li>
-            </ul>
 
             <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -153,10 +109,10 @@
                         <a class="nav-link" href="@Url.Action("Login", "Account")">Switch Role</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Feedback/Submit">Submit Feedback</a>
+                        <a class="nav-link" asp-controller="Feedback" asp-action="Submit">Submit Feedback</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Feedback/ViewFeedback">View Feedback</a>
+                        <a class="nav-link" asp-controller="Feedback" asp-action="ViewFeedback">View Feedback</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Logout", "Account")">Logout</a>
@@ -164,6 +120,27 @@
                 </ul>
             </div>
 
+            <!-- Hamburger Menu Items -->
+            <ul id="hamburger-menu" class="menu-items">
+                @if (Context.Session.GetString("UserRole") == "Lecturer")
+                {
+                    <li><a href="/Lecturer/Dashboard">Dashboard</a></li>
+                    <li><a href="/Lecturer/SubmitClaim">Submit Claims</a></li>
+                }
+                @if (Context.Session.GetString("UserRole") == "AcademicManager")
+                {
+                    <li><a href="/Manager/Dashboard">Dashboard</a></li>
+                    <li><a href="/Manager/ManageClaims">Manage Claims</a></li>
+                }
+                @if (Context.Session.GetString("UserRole") == "HR")
+                {
+                    <li><a href="/HR/Dashboard">HR Dashboard</a></li>
+                    <li><a href="/HR/ManageApprovals">Manage Approvals</a></li>
+                }
+                <li><a href="/Feedback/Submit">Submit Feedback</a></li>
+                <li><a href="/Feedback/ViewFeedback">View Feedback</a></li>
+                <li><a href="/Account/Logout">Logout</a></li>
+            </ul>
         </nav>
     </header>
 
@@ -195,6 +172,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-
-

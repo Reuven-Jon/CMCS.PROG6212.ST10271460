@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 //Reuven-Jon Kadalie ST10271460
 
-namespace CMCS.PROG6212.ST10271460.Models
+namespace CMCS.PROG6212.ST10271460.Data
 {
 
     public class ApplicationDbContext : DbContext
