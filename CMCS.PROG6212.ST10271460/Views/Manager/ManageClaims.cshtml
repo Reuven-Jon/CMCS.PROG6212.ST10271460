@@ -1,0 +1,177 @@
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Claims</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+        }
+
+        .container {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+            .search-bar input {
+                padding: 8px;
+                width: 250px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: left;
+        }
+
+        td {
+            text-align: left;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+            .status.pending {
+                color: orange;
+            }
+
+            .status.approved {
+                color: green;
+            }
+
+            .status.rejected {
+                color: red;
+            }
+
+        .btn {
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+
+            .btn.approve {
+                background-color: #28a745;
+            }
+
+            .btn.reject {
+                background-color: #dc3545;
+            }
+
+            .btn:hover {
+                opacity: 0.8;
+            }
+
+        .alert {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #d4edda;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Manage Claims</h2>
+
+        <!-- Claims Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Lecturer Name</th>
+                    <th>Claim Period</th>
+                    <th>Hours Worked</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.LecturerName</td>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.HoursWorked</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                            <td>
+                                <span class="status @claim.Status.ToString().ToLower()">
+                                    @claim.Status
+                                </span>
+                            </td>
+                            <td>
+                                @if (claim.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)
+                                {
+                                    <form asp-action="ApproveClaim" asp-controller="Manager" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@claim.Id" />
+                                        <button type="submit" class="btn btn approve">Approve</button>
+                                    </form>
+                                    <form asp-action="RejectClaim" asp-controller="Manager" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@claim.Id" />
+                                        <button type="submit" class="btn btn reject">Reject</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span>N/A</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No claims available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Display Message -->
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert">
+                @TempData["Message"]
+            </div>
+        }
+    </div>
+</body>
+</html>

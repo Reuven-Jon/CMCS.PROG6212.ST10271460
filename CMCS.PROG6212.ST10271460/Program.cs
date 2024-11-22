@@ -90,6 +90,12 @@ app.MapControllerRoute(
     pattern: "Lecturer/{action=Dashboard}/{id?}",
     defaults: new { controller = "Lecturer", action = "Dashboard" });
 
+app.MapControllerRoute(
+    name: "manager",
+    pattern: "Manager/{action=Dashboard}/{id?}",
+    defaults: new { controller = "Manager", action = "Dashboard" });
+
+
 app.MapHub<ClaimHub>("/claimHub");
 
 // Seed the database with roles, users, and test data

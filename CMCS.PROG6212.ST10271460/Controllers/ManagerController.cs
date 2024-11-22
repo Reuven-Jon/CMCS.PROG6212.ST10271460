@@ -13,61 +13,57 @@ public class ManagerController : Controller
         _context = context;
         _hubContext = hubContext;
     }
-
-    public async Task<IActionResult> ManageClaims(string filter = "")
+    public IActionResult Dashboard()
     {
         if (HttpContext.Session.GetString("UserRole") != "Manager")
         {
             return RedirectToAction("AccessDenied", "Account");
         }
 
-        // Query claims with optional filter
-        var claimsQuery = _context.Claims.AsQueryable();
+        var claims = _context.Claims.ToList(); // Fetch claims
+        return View(claims);
+    }
 
-        if (!string.IsNullOrEmpty(filter))
+    public IActionResult ManageClaims()
+    {
+        if (HttpContext.Session.GetString("UserRole") != "Manager")
         {
-            claimsQuery = claimsQuery.Where(c => c.Status.ToString().Equals(filter, StringComparison.OrdinalIgnoreCase));
+            return RedirectToAction("AccessDenied", "Account");
         }
 
-        var claims = await claimsQuery.OrderByDescending(c => c.DateSubmitted).ToListAsync();
-
+        var claims = _context.Claims.Where(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)).ToList();
         return View(claims);
     }
 
 
+
+
     [HttpPost]
-    public async Task<IActionResult> ApproveClaim(int id)
+    public IActionResult ApproveClaim(int id)
     {
         var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
-
         if (claim != null)
         {
             claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved);
             _context.SaveChanges();
-
-            // Notify clients via SignalR
-            await _hubContext.Clients.All.SendAsync("ReceiveClaimUpdate", claim.Id, "Approved", "Claim approved by manager.");
+            TempData["Message"] = "Claim approved successfully.";
         }
-
         return RedirectToAction("ManageClaims");
     }
 
     [HttpPost]
-    public async Task<IActionResult> RejectClaim(int id)
+    public IActionResult RejectClaim(int id)
     {
         var claim = _context.Claims.FirstOrDefault(c => c.Id == id);
-
         if (claim != null)
         {
             claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected);
             _context.SaveChanges();
-
-            // Notify clients via SignalR
-            await _hubContext.Clients.All.SendAsync("ReceiveClaimUpdate", claim.Id, "Rejected", "Claim rejected by manager.");
+            TempData["Message"] = "Claim rejected successfully.";
         }
-
         return RedirectToAction("ManageClaims");
     }
+
 }
 
 

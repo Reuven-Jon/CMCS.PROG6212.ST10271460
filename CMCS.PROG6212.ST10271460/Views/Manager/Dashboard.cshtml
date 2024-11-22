@@ -116,7 +116,17 @@
 
             <a href="@Url.Action("ManageClaims", "Manager")" class="btn btn-primary">Manage Claims</a>
             <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Logout</a>
+        </div>
 
+        <!-- Filter Section -->
+        <div>
+            <label for="filter">Filter by Status:</label>
+            <select id="filter" onchange="applyFilter()">
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
         </div>
 
         <!-- Monthly Claims Table -->
@@ -151,41 +161,42 @@
                 }
             </tbody>
         </table>
-        <div>
-            <label for="filter">Filter by Status:</label>
-            <select id="filter" onchange="applyFilter()">
-                <option value="">All</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-        </div>
-
-        <script>
-            function applyFilter() {
-                const filter = document.getElementById('filter').value;
-                const url = new URL(window.location.href);
-                url.searchParams.set('filter', filter); // Add filter parameter to the query string
-                window.location.href = url.toString(); // Redirect with the updated query string
-            }
-        </script>
 
         <!-- Button Group -->
         <div class="button-group">
-            
             <button class="btn btn-secondary" onclick="location.href='@Url.Action("Manage", "Claim")'">Manage Claims</button>
         </div>
     </div>
 
+    <!-- SignalR Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.17/signalr.min.js"></script>
     <script>
+        // SignalR connection for real-time updates
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/claimHub")
+            .build();
+
+        connection.start().then(() => {
+            console.log("SignalR connected.");
+        });
+
+        // Receive claim update notifications
         connection.on("ReceiveClaimUpdate", (claimId, status, note) => {
             alert(`Claim ID: ${claimId} status updated: ${status}`);
             location.reload(); // Refresh the claims table
         });
-    </script>
 
+        // Filter Claims Functionality
+        function applyFilter() {
+            const filter = document.getElementById('filter').value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('filter', filter); // Add filter parameter to the query string
+            window.location.href = url.toString(); // Redirect with the updated query string
+        }
+    </script>
 </body>
 </html>
+
 
 
 
