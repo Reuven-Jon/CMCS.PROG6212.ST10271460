@@ -44,7 +44,7 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             var claim = _context.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
-                claim.Status = ClaimStatus.Approved;
+                claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Approved;
                 _context.SaveChanges();
             }
             return RedirectToAction("ManageClaims");
@@ -56,11 +56,12 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             var claim = _context.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
-                claim.Status = ClaimStatus.Rejected;
+                claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Rejected;
                 _context.SaveChanges();
             }
             return RedirectToAction("ManageClaims");
         }
+
     }
 }
 
