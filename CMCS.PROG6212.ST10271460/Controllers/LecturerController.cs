@@ -1,76 +1,95 @@
-﻿using Azure.Identity;
-using CMCS.PROG6212.ST10271460.Data;
+﻿using CMCS.PROG6212.ST10271460.Data;
 using CMCS.PROG6212.ST10271460.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-[Authorize(Roles = "Lecturer")]
-public class LecturerController : Controller
+namespace CMCS.PROG6212.ST10271460.Controllers
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IWebHostEnvironment _hostingEnvironment;
-
-    public LecturerController(ApplicationDbContext context, IWebHostEnvironment hostingEnvironment)
+    public class LecturerController : Controller
     {
-        _context = context;
-        _hostingEnvironment = hostingEnvironment;
-    }
+        private readonly ApplicationDbContext _context;
 
-    public IActionResult Dashboard()
-    {
-        if (HttpContext.Session.GetString("UserRole") != "Lecturer")
+        public LecturerController(ApplicationDbContext context)
         {
-            return RedirectToAction("AccessDenied", "Account");
+            _context = context;
         }
 
-        var username = HttpContext.Session.GetString("Username");
-        var claims = _context.Claims.Where(c => c.LecturerName == username).ToList();
-        return View(claims);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile document)
-    {
-        if (ModelState.IsValid)
+        [HttpGet]
+        public IActionResult SubmitClaim()
         {
-            var username = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(username))
+            if (HttpContext.Session.GetString("UserRole") != "Lecturer")
             {
-                // Handle the case where the username is null or empty
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            return View(new ClaimViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitClaim(ClaimViewModel model, IFormFile document)
+        {
+            if (HttpContext.Session.GetString("UserRole") != "Lecturer")
+            {
+                return RedirectToAction("AccessDenied", "Account");
             }
 
-            var claim = new Claim
+            if (ModelState.IsValid)
             {
-                LecturerName = username,
-                ClaimPeriod = model.ClaimPeriod,
-                HoursWorked = model.HoursWorked,
-                HourlyRate = model.HourlyRate,
-                Amount = model.HoursWorked * model.HourlyRate,
-                DateSubmitted = DateTime.Now,
-                Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Pending
-            };
-
-            if (document != null && document.Length > 0)
-            {
-                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", document.FileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                var username = HttpContext.Session.GetString("Username");
+                if (string.IsNullOrEmpty(username))
                 {
-                    await document.CopyToAsync(stream);
+                    return RedirectToAction("Login", "Account");
                 }
-                claim.DocumentPath = "/uploads/" + document.FileName;
+
+                // Create new claim
+                var claim = new Claim
+                {
+                    LecturerName = username,
+                    ClaimPeriod = model.ClaimPeriod,
+                    HoursWorked = model.HoursWorked,
+                    HourlyRate = model.HourlyRate,
+                    Amount = model.HoursWorked * model.HourlyRate,
+                    DateSubmitted = DateTime.Now,
+                    Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)
+                };
+
+                // Handle document upload
+                if (document != null && document.Length > 0)
+                {
+                    var filePath = Path.Combine("wwwroot/uploads", document.FileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath)!); // Ensure the directory exists
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await document.CopyToAsync(stream);
+                    }
+                    claim.DocumentPath = "/uploads/" + document.FileName;
+                }
+
+                _context.Claims.Add(claim);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Dashboard", "Lecturer");
             }
 
-            _context.Claims.Add(claim);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Dashboard");
+            return View(model);
         }
 
-        return View(model);
-    }
+        public IActionResult Dashboard()
+        {
+            if (HttpContext.Session.GetString("UserRole") != "Lecturer")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
 
+            var username = HttpContext.Session.GetString("Username");
+            var claims = _context.Claims.Where(c => c.LecturerName == username).ToList();
+            return View(claims);
+        }
+    }
 }
+
+
+
 
 
 

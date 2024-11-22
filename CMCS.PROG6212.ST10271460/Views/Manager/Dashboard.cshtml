@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Monthly Claim System - Homepage</title>
+    <title>Manager Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -111,8 +111,12 @@
     <div class="container">
         <!-- Welcome Section -->
         <div class="welcome-section">
-            <h2>Welcome to the Contract Monthly Claim System</h2>
-            <p>Manage and track your monthly claims seamlessly.</p>
+            <h2>Manager Dashboard</h2>
+            <p>Welcome, @Context.Session.GetString("Username")!</p>
+
+            <a href="@Url.Action("ManageClaims", "Manager")" class="btn btn-primary">Manage Claims</a>
+            <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Logout</a>
+
         </div>
 
         <!-- Monthly Claims Table -->
@@ -150,7 +154,7 @@
 
         <!-- Button Group -->
         <div class="button-group">
-            <button class="btn btn-primary" onclick="location.href='@Url.Action("Submit", "Claim")'">Submit Claim</button>
+            
             <button class="btn btn-secondary" onclick="location.href='@Url.Action("Manage", "Claim")'">Manage Claims</button>
         </div>
     </div>

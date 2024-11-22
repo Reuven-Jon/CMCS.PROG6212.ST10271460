@@ -3,7 +3,6 @@ using CMCS.PROG6212.ST10271460.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace CMCS.PROG6212.ST10271460.Controllers
 {
@@ -16,39 +15,58 @@ namespace CMCS.PROG6212.ST10271460.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Lecturer")]
         public IActionResult Submit()
         {
-            if (HttpContext.Session.GetString("UserRole") != "Lecturer")
-            {
-                return RedirectToAction("AccessDenied", "Account");
-            }
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Lecturer")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Submit(Claim claim)
+        public async Task<IActionResult> Submit(ClaimViewModel model, IFormFile document)
         {
-            if (HttpContext.Session.GetString("UserRole") != "Lecturer")
-            {
-                return RedirectToAction("AccessDenied", "Account");
-            }
-
             if (ModelState.IsValid)
             {
-                claim.DateSubmitted = DateTime.Now;
-                claim.Status = CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending;
+                var username = HttpContext.Session.GetString("Username");
+                if (string.IsNullOrEmpty(username))
+                {
+                    return RedirectToAction("Login", "Account");
+                }
 
+                var claim = new Claim
+                {
+                    LecturerName = username,
+                    ClaimPeriod = model.ClaimPeriod,
+                    HoursWorked = model.HoursWorked,
+                    HourlyRate = model.HourlyRate,
+                    Amount = model.HoursWorked * model.HourlyRate,
+                    Overtime = model.HoursWorked > 160 ? (model.HoursWorked - 160) * (model.HourlyRate * 1.5m) : 0,
+                    SpecialAllowance = model.SpecialAllowance,
+                    DateSubmitted = DateTime.Now,
+                    Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending)
+                };
+
+                if (document != null && document.Length > 0)
+                {
+                    var filePath = Path.Combine("uploads", document.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await document.CopyToAsync(stream);
+                    }
+                    claim.DocumentPath = "/uploads/" + document.FileName;
+                }
 
                 _context.Add(claim);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction("Dashboard", "Lecturer");
             }
 
-            return View(claim);
+            return View(model);
         }
 
-        [Authorize(Roles = "HR")]
+        [Authorize(Roles = "Manager")]
         public IActionResult Manage()
         {
             var claims = _context.Claims.ToList();
@@ -56,22 +74,28 @@ namespace CMCS.PROG6212.ST10271460.Controllers
         }
 
         [Authorize(Roles = "Manager")]
-        public IActionResult StatusReport()
+        public IActionResult ApproveClaim(int id)
         {
-            var pendingClaims = _context.Claims.Count(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Pending);
-            var approvedClaims = _context.Claims.Count(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Approved);
-            var rejectedClaims = _context.Claims.Count(c => c.Status == (CMCS.PROG6212.ST10271460.Models.ClaimStatus)ClaimStatus.Rejected);
-
-            ViewBag.PendingClaims = pendingClaims;
-            ViewBag.ApprovedClaims = approvedClaims;
-            ViewBag.RejectedClaims = rejectedClaims;
-
-            return View();
+            var claim = _context.Claims.Find(id);
+            if (claim != null && claim.Status.Equals(ClaimStatus.Pending))
+            {
+                claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Manage");
         }
 
-
-
+        [Authorize(Roles = "Manager")]
+        public IActionResult RejectClaim(int id)
+        {
+            var claim = _context.Claims.Find(id);
+            if (claim != null && claim.Status.Equals(ClaimStatus.Pending))
+            {
+                claim.Status = (CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Manage");
+        }
 
     }
 }
-

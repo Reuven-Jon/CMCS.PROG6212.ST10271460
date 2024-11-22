@@ -96,6 +96,11 @@
 <body>
     <div class="container">
         <h2>Lecturer Dashboard</h2>
+        <p>Welcome, @Context.Session.GetString("Username")!</p>
+
+        <a href="@Url.Action("SubmitClaim", "Lecturer")" class="btn btn-primary">Submit Claim</a>
+        <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Logout</a>
+
 
         <!-- Summary Section -->
         <div class="summary">

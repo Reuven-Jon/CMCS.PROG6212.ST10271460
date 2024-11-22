@@ -6,61 +6,55 @@ namespace CMCS.PROG6212.ST10271460.Controllers
 {
     public class AccountController : Controller
     {
-        public IActionResult Login(string role = "")
+        [HttpGet]
+        public IActionResult Login()
         {
-            ViewBag.Role = role;
-            return View(new LoginViewModel { Role = role });
+            return View();
         }
 
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            // Validate username and password requirements
-            if (ModelState.IsValid && IsValidLogin(model.Username, model.Password))
+            if (ModelState.IsValid)
             {
-                // Set session variables for user login
-                HttpContext.Session.SetString("Username", model.Username);
-                HttpContext.Session.SetString("UserRole", model.Role);
-
-                // Redirect to the appropriate dashboard
-                switch (model.Role)
+                if (IsValidLogin(model.Username, model.Password))
                 {
-                    case "Lecturer":
-                        return RedirectToAction("Dashboard", "Lecturer");
-                    case "Manager":
-                        return RedirectToAction("Dashboard", "Manager");
-                    case "HR":
-                        return RedirectToAction("Dashboard", "HR");
-                    default:
-                        return RedirectToAction("AccessDenied");
-                }
-            }
+                    HttpContext.Session.SetString("Username", model.Username);
+                    HttpContext.Session.SetString("UserRole", model.Role);
 
-            // Show error message if validation fails
-            ViewBag.ErrorMessage = "Invalid login credentials. Please try again.";
+                    switch (model.Role)
+                    {
+                        case "Lecturer":
+                            return RedirectToAction("Dashboard", "Lecturer");
+                        case "Manager":
+                        case "Coordinator":
+                            return RedirectToAction("Dashboard", "Manager");
+                        case "HR":
+                            return RedirectToAction("Dashboard", "HR");
+                        default:
+                            ViewBag.ErrorMessage = "Invalid role selected.";
+                            return View(model);
+                    }
+                }
+                ViewBag.ErrorMessage = "Invalid Username or Password.";
+            }
             return View(model);
         }
 
         public IActionResult Logout()
         {
-            // Clear session variables on logout
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
 
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
         private bool IsValidLogin(string username, string password)
         {
-            // Ensure username is exactly 4 characters and password is exactly 8 characters
-            return username.Length == 4 &&
-                   password.Length == 8 &&
+            return username.Length == 4 && password.Length == 8 &&
                    !password.Any(char.IsWhiteSpace) &&
                    !password.Contains("=") &&
                    !password.Contains("+");
         }
     }
 }
+
+

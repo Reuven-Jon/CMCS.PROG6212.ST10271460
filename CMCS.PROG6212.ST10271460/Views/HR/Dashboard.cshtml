@@ -1,5 +1,163 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<CMCS.PROG6212.ST10271460.Models.Claim>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            padding: 20px;
+            background-color: #ffffff;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .summary {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .summary-card {
+            flex: 1 1 calc(25% - 20px);
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status.pending {
+            color: orange;
+        }
+
+        .status.approved {
+            color: green;
+        }
+
+        .status.rejected {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>HR Dashboard</h2>
+        <p>Welcome, @Context.Session.GetString("Username")!</p>
+
+        <a href="@Url.Action("Logout", "Account")" class="btn btn-secondary">Logout</a>
+
+        <!-- Summary Section -->
+        <div class="summary">
+            <div class="summary-card">
+                <h4>Total Claims</h4>
+                <p>@Model?.Count() ?? 0</p>
+            </div>
+            <div class="summary-card">
+                <h4>Pending Claims</h4>
+                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Pending) ?? 0</p>
+            </div>
+            <div class="summary-card">
+                <h4>Approved Claims</h4>
+                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Approved) ?? 0</p>
+            </div>
+            <div class="summary-card">
+                <h4>Rejected Claims</h4>
+                <p>@Model?.Count(c => c.Status == CMCS.PROG6212.ST10271460.Models.ClaimStatus.Rejected) ?? 0</p>
+            </div>
+        </div>
+
+        <!-- Claims Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Lecturer Name</th>
+                    <th>Claim Period</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date Submitted</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.LecturerName</td>
+                            <td>@claim.ClaimPeriod.ToString("MMMM yyyy")</td>
+                            <td>@claim.Amount.ToString("C")</td>
+                            <td>
+                                <span class="status @claim.Status.ToString().ToLowerInvariant()">@claim.Status</span>
+                            </td>
+                            <td>@claim.DateSubmitted.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <a href="/HR/ApproveClaim/@claim.Id" class="btn-info">Approve</a>
+                                <a href="/HR/RejectClaim/@claim.Id" class="btn-info">Reject</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6">No claims available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+

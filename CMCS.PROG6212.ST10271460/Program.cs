@@ -26,7 +26,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("HRPolicy", policy => policy.RequireRole("HR"));
 });
 
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("CMCSDatabase"));
 
@@ -39,11 +38,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// Enable Authentication and Authorization
+app.UseSession(); // Ensure session middleware is added before authentication
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
@@ -60,3 +58,4 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
